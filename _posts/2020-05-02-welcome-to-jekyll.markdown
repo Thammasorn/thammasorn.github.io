@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "เริ่มต้นกับ Reinforcement Learning"
+title:  "Introduction to Reinforcement Learning"
 date:   2020-05-02 22:15:02 +0700
 categories: jekyll update
 image_title: /ai.png
