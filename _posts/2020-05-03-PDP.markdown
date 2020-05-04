@@ -153,3 +153,9 @@ tags: ['machine learning','data science','model interpretation']
 สุดท้ายนี้ บทความนี้เขียนตามความเข้าใจส่วนบุคคล ถ้ามีข้อผิดพลาดอันใด ขออภัยไว้ล่วงหน้า ส่วนในอนาคตถ้าขยันจะมาต่อวิธีอื่น ๆ ที่เราใช้ตีความโมเดลได้อีก ที่จริง PDP พล็อตนี่เป็นวิธีที่พื้นฐานที่สุดเลย บะบายจ้า
 
 
+### Reference
+[1] https://christophm.github.io/interpretable-ml-book/pdp.html
+
+[2] https://towardsdatascience.com/introducing-pdpbox-2aa820afd312
+
+[3] https://www.rdocumentation.org/packages/randomForest/versions/4.6-12
