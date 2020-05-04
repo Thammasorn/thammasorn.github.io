@@ -1,58 +1,80 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
 	<head>
+		<!-- <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script> -->
 
-	{% if site.google_analytics %}
-	  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
-	  <script>
-	    window.dataLayer = window.dataLayer || [];
-	    function gtag(){dataLayer.push(arguments);}
-	    gtag('js', new Date());
-	    gtag('config', '{{ site.google_analytics }}');
-	  </script>
-	{% endif %}
-	<meta charset="UTF-8">
+		{% if site.google_analytics %}
+		  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+		  <script>
+		    window.dataLayer = window.dataLayer || [];
+		    function gtag(){dataLayer.push(arguments);}
+		    gtag('js', new Date());
+		    gtag('config', '{{ site.google_analytics }}');
+		  </script>
+		{% endif %}
+		<meta charset="UTF-8">
 
-	{% seo %}
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="theme-color" content="#157878">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<style type="text/css">
-		.page-header-post {
-		  color: #000;
-		  text-align: center;
-		  padding-top: 50px;	
-		  padding-bottom: 50px;	
-		}
-
-		.page-header-post::after{
-			content: "";
-			background: url({{page.image_title}});
-			max-height: 250px;
-			/*height: auto;
-			width:100%;*/
-			object-fit: contain;
-			opacity: 0.5;
-			top: 0;
-			left: 0;
-			bottom: 0;
-			right: 0;
-			position: absolute;
-			z-index: -1; 
-			/*filter: brightness(10%)*/
-		}
-	</style>
-	<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+		{% seo %}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="theme-color" content="#157878">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<!-- 
+		.page-heder-post เซ็ต style ของหัวข้อ
+		pre เซ็ตขนาดของ tab ใน code highlight
+		 -->
+		<style type="text/css">
+			.page-header-post {
+			  color: #000;
+			  text-align: center;
+			  padding-top: 50px;	
+			  padding-bottom: 50px;	
+			}
+			pre {
+			    tab-size: 4;
+			}
+		</style>
+		<!-- ใช้พิมพ์สมการและนับเลขสมการ -->
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+		    TeX: {
+		      equationNumbers: { autoNumber: "AMS" },
+		      tagSide: "right"
+		    },
+		    tex2jax: {
+		      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+		      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+		      processEscapes: true
+		    }
+		  });
+		  MathJax.Hub.Register.StartupHook("TeX AMSmath Ready", function () {
+		    MathJax.InputJax.TeX.Stack.Item.AMSarray.Augment({
+		      clearTag() {
+		        if (!this.global.notags) {
+		          this.super(arguments).clearTag.call(this);
+		        }
+		      }
+		    });
+		  });
+		</script>
+		<script type="text/javascript" charset="utf-8"
+		  src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS_CHTML">
+		</script>
+		<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
 	</head>
 	<body>
 
 		<header class="page-header-post" role="banner">
 			<h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-			<h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
+			<!-- สร้าง list Tags -->
+			<a style="color: black; font-weight: bold">Tag:</a>
+			{% for tag in page.tags%}
+				<a href="#" class="badge badge-primary">{{tag}}</a>
+			{% endfor %}
 		</header>
 
 
-		<main id="content" class="main-content" role="main">
+		<!-- Content จากแต่ละ page จมาลงส่วนนี้ -->
+		<main id="content" class="main-content" role="main" style="text-align: justify; font-size: 15pt; color: black; line-height: 1.8;">
 		  {{ content }}
 
 		  <footer class="site-footer">
