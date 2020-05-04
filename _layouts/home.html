@@ -44,7 +44,19 @@
 			};
 			xhr.send();
 		}
-		load_post_by_tag('all')
+		function coloring_tag_badge(){
+
+			// var ids = [];
+			var everyChild = document.querySelectorAll("#list_article div");
+			// for (var i = 0; i<everyChild.length; i++) {
+			// 	ids.push(everyChild[i])
+			//     everyChild[i].classList.add("anything");
+			// }
+
+			console.log(everyChild);
+		}
+		load_post_by_tag('all');
+		coloring_tag_badge();
 	</script>
 
 	<body>
@@ -82,14 +94,4 @@
 			</div>
 		</div>
 	</body>
-	<script type="text/javascript">
-		var ids = [];
-		var children = document.getElementById("list_article").children; //get container element children.
-		for (var i = 0, len = children.length ; i < len; i++) {
-		    children[i].className = 'new-class'; //change child class name.
-		    ids.push(children[i].id); //get child id.
-		}
-
-		console.log(ids);
-	</script>
 </html>
