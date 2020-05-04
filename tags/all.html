@@ -1,0 +1,36 @@
+---
+---
+<script type="text/javascript">
+	var tag_color = {'reinforcement learning': '#ff5200','deep learning':'#6f0000','machine learning':'#00263b','data science':'#00a1ab','model interpretation':'#708160'};
+</script>
+{% for post in site.posts%}
+	<div class="row border-bottom" style='margin-top:20px;'>
+		<div class="col-md-4">
+			<img src="{{post.img_title}}">
+		</div>
+		<div class="col-md-8">
+			<h2>
+				<a href="{{post.url}}" style="color:black;">
+					{{ post.title }}
+				</a>
+			</h2>
+			<p style="color:#808080"><i>{{post.date | date: "%-d %B %Y" }}</i></p>
+			<a class="font-weight-bold">Tag:</a>
+			{% for tag in post.tags%}
+				<a href="#" class="badge badge-primary" id="{{tag}}_{{post.title}}">{{tag}}</a>
+				<script type="text/javascript">
+					document.getElementById("{{tag}}_{{post.title}}").style.backgroundColor = tag_color['{{tag}}'];
+					alert('asdfasfadsf');
+				</script>
+			{% endfor %}
+			<p style='margin-top:10px;' class="text-justify">
+				{{ post.description }}
+			</p>
+			<p>
+				<a class="btn btn-success" href="{{post.url}}">อ่านต่อเลยจ้า »</a>
+			</p>
+		</div>
+	</div>
+{% endfor %}
+
+<script type="text/javascript">alert('tthththt');</script>

@@ -2,90 +2,115 @@
 ---
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-	{% if site.google_analytics %}
-	  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
-	  <script>
-	    window.dataLayer = window.dataLayer || [];
-	    function gtag(){dataLayer.push(arguments);}
-	    gtag('js', new Date());
-	    gtag('config', '{{ site.google_analytics }}');
-	  </script>
-	{% endif %}
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Thammasorn</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </head>
-  <style type="text/css">
-  	.top-buffer { margin-top:30px; }
-  	img {
-	  display: block;
-	  max-width: 100%;
-	  height: auto;
+	<head>
+		{% if site.google_analytics %}
+		  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+		  <script>
+		    window.dataLayer = window.dataLayer || [];
+		    function gtag(){dataLayer.push(arguments);}
+		    gtag('js', new Date());
+		    gtag('config', '{{ site.google_analytics }}');
+		  </script>
+		{% endif %}
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Thammasorn</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</head>
+	<style type="text/css">
+		.top-buffer { margin-top:30px; }
+		img {
+		display: block;
+		max-width: 100%;
+		height: auto;
 	}
-  </style>
-  	<script type="text/javascript">
+	</style>
+	<script type="text/javascript">
 		var tag_color = {'reinforcement learning': '#ff5200','deep learning':'#6f0000','machine learning':'#00263b','data science':'#00a1ab','model interpretation':'#708160'};
 	</script>
-  <body>
 
-    <div class="container-fluid">
-    <div class="row top-buffer">
-		<div class="col-md-1"></div>
-		<div class="col-md-10">
-			<div class="row top-buffer border-bottom">
-				{%include home_component/my_info.html%}
-			</div>
-			<div class="row top-buffer" style='margin-top:50px;'>
-				<div class="col-md-12" style="text-align:center;">
-					<h1>
-						Articles
-					</h1>
-					<p>เลือกตาม tag ได้เลยจ้า</p>
-			        <span style="font-size:23px;"><a href="#" class="badge badge-primary" id="{{tag|first}}" style="background-color: green;">All</a></span>
-			        {% for tag in site.tags %}
-			        	<span style="font-size:23px;"><a href="#" class="badge badge-primary" id="{{tag|first}}">{{tag|first}}</a></span>
-			        	<script type="text/javascript">document.getElementById("{{tag|first}}").style.backgroundColor = tag_color['{{tag|first}}'];</script>
-			        {% endfor %}
-				</div>
-			</div>
-			<div class="row top-buffer" style='margin-top:50px;'>
-				<div class="col-md-12">
-					{% for post in site.posts%}
-						<div class="row border-bottom" style='margin-top:20px;'>
-							<div class="col-md-4">
-								<img src="{{post.img_title}}">
-							</div>
-							<div class="col-md-8">
-								<h2>
-									<a href="{{post.url}}" style="color:black;">
-										{{ post.title }}
-									</a>
-								</h2>
-								<p style="color:#808080"><i>{{post.date | date: "%-d %B %Y" }}</i></p>
-								<a class="font-weight-bold">Tag:</a>
-								{% for tag in post.tags%}
-									<a href="#" class="badge badge-primary" id="{{tag}}_{{post.title}}">{{tag}}</a>
-									<script type="text/javascript">document.getElementById("{{tag}}_{{post.title}}").style.backgroundColor = tag_color['{{tag}}'];</script>
-								{% endfor %}
-								<p style='margin-top:10px;' class="text-justify">
-									{{ post.description }}
-								</p>
-								<p>
-									<a class="btn btn-success" href="{{post.url}}">อ่านต่อเลยจ้า »</a>
-								</p>
-							</div>
+	<script type="text/javascript">
+		function load_post_by_tag(selected_tag){
+			var xhr= new XMLHttpRequest();
+			xhr.open('GET', 'tags/'+selected_tag+'.html', true);
+			xhr.onreadystatechange= function() {
+			    if (this.readyState!==4) return;
+			    if (this.status!==200) return; // or whatever error handling you want
+			    document.getElementById('list_article').innerHTML= this.responseText;
+			};
+			xhr.send();
+		}
+		load_post_by_tag('all')
+	</script>
+
+	<body>
+
+		<div class="container-fluid">
+			<div class="row top-buffer">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row top-buffer border-bottom">
+						{%include home_component/my_info.html%}
+					</div>
+					<div class="row top-buffer" style='margin-top:50px;'>
+						<div class="col-md-12" style="text-align:center;">
+							<h1>
+								Articles
+							</h1>
+							<p>คลิกที่ Tag ข้างล่างได้เลยจ้า</p>
+					        <span style="font-size:23px;">
+					        	<button onclick="load_post_by_tag('all');" class="badge badge-primary" id="all" style="background-color: green; color:white;">All</button>
+					        </span>
+					        {% for tag in site.tags %}
+					        	<span style="font-size:23px;">
+					        		<button onclick="load_post_by_tag('{{tag|first}}');" class="badge badge-primary" id="{{tag|first}}" style="color: white;">{{tag|first}}</button>
+					        	</span>
+					        	<script type="text/javascript">document.getElementById("{{tag|first}}").style.backgroundColor = tag_color['{{tag|first}}'];</script>
+					        {% endfor %}
 						</div>
-					{% endfor %}
+					</div>
+					<div class="row top-buffer" style='margin-top:50px;'>
+						<div class="col-md-12" id='list_article'>
+							<!-- {% include home_component/list_post_by_tag.html focus_tag="data science"%} -->
+							<!-- {% include home_component/list_post_by_tag.html focus_tag="reinforcement learning"%} -->
+
+							<!-- {% for post in site.posts%}
+								{% if post.tags contains "data science"%}
+								<div class="row border-bottom" style='margin-top:20px;'>
+									<div class="col-md-4">
+										<img src="{{post.img_title}}">
+									</div>
+									<div class="col-md-8">
+										<h2>
+											<a href="{{post.url}}" style="color:black;">
+												{{ post.title }}
+											</a>
+										</h2>
+										<p style="color:#808080"><i>{{post.date | date: "%-d %B %Y" }}</i></p>
+										<a class="font-weight-bold">Tag:</a>
+										{% for tag in post.tags%}
+											<a href="#" class="badge badge-primary" id="{{tag}}_{{post.title}}">{{tag}}</a>
+											<script type="text/javascript">document.getElementById("{{tag}}_{{post.title}}").style.backgroundColor = tag_color['{{tag}}'];</script>
+										{% endfor %}
+										<p style='margin-top:10px;' class="text-justify">
+											{{ post.description }}
+										</p>
+										<p>
+											<a class="btn btn-success" href="{{post.url}}">อ่านต่อเลยจ้า »</a>
+										</p>
+									</div>
+								</div>
+								{%endif%}
+							{% endfor %} -->
+						</div>
+					</div>
 				</div>
+				<div class="col-md-1"></div>
 			</div>
 		</div>
-		<div class="col-md-1"></div>
-	</div>
-  </body>
+	</body>
 </html>
