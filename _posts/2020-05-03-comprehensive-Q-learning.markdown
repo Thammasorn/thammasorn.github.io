@@ -4,7 +4,7 @@ title:  "Q Learning"
 date:   2020-05-03 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/Q-learning.png
 img_header: /assets/img/header/Q-learning.png
-description: "บทความนี้จะพูดถึง Q-Learning ตั้งแต่พื้นฐานที่สุดแบบ tabular Q-learning ไปจน Deep Q-Learning และรีวิว Extension ของมัน"
+description: "บทความนี้จะพูดถึง Q-Learning ซึ่งเป็น reinforcement algorithm ที่เป็นพื้นฐานของหลาย ๆ reinforcement algorithm ในปัจจุบัน"
 tags: ['reinforcement learning','deep learning']
 ---
 
