@@ -2,8 +2,10 @@
 layout: post
 title:  "Partial Dependence Plot"
 date:   2020-05-03 22:15:02 +0700
-img_title: /assets/img/cover/pdp.png
+img_thumbnail: /assets/img/thumbnail/pdp.png
+img_header: /assets/img/header/pdp.jpg
 description: "บทความนี้จะทำความรู้จักกับ Partial Depence Plot (PDP) ซึ่งเป็นวิธีในการหาความสัมพันธ์ระหว่างข้อมูลฟีเจอร์กับผลลัพธ์การทำนายไม่ว่าจะเป็น Classification หรือ Regression"
+sub_title: "หาว่าฟีเจอร์ไหนส่งผลต่อโมเดลอย่างไร"
 tags: ['machine learning','data science','model interpretation']
 ---
 

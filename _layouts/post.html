@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
 	<head>
@@ -15,14 +17,14 @@
 		<meta charset="UTF-8">
 
 		{% seo %}
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="theme-color" content="#157878">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
 		<!-- 
 		.page-heder-post เซ็ต style ของหัวข้อ
 		pre เซ็ตขนาดของ tab ใน code highlight
 		 -->
-		<style type="text/css">
+		<!-- <style type="text/css">
 			.page-header-post {
 			  color: #000;
 			  text-align: center;
@@ -32,7 +34,7 @@
 			pre {
 			    tab-size: 4;
 			}
-		</style>
+		</style> -->
 		<!-- ใช้พิมพ์สมการและนับเลขสมการ -->
 		<script type="text/x-mathjax-config">
 		  MathJax.Hub.Config({
@@ -60,24 +62,83 @@
 		  src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS_CHTML">
 		</script>
 		<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-	</head>
-	<body>
 
-		<header class="page-header-post" role="banner">
+		 <!-- Bootstrap core CSS -->
+		  <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+		  <!-- Custom fonts for this template -->
+		  <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+		  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+		  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+		  <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Mitr:wght@500&family=Sarabun:wght@200&family=Taviraj:wght@200&display=swap" rel="stylesheet">
+		  <link href="/assets/css/clean-blog.min.css" rel="stylesheet">
+
+		  <script type="text/javascript">
+		    var tag_color = {'reinforcement learning': '#ff5200','deep learning':'#6f0000','machine learning':'#00263b','data science':'#00a1ab','model interpretation':'#708160'};
+		  </script>
+	</head>
+
+	<body>
+	 <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="/index.html" style="font-family: 'Mitr';">ใครไม่สอน ธรรมสรณ์</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/index.html" style="font-family: 'Mitr', sans-serif;">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about.html" style="font-family: 'Mitr', sans-serif;">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contact.html" style="font-family: 'Mitr', sans-serif;">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('{{page.img_header}}')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1 style="font-family: 'Mitr', sans-serif;">{{page.title}}</h1>
+            <h2 class="subheading" style="font-family: 'Mitr', sans-serif;">{{page.sub_title}}</h2>
+            <span>
+			{% for tag in page.tags%}
+				<a href="#" class="badge badge-primary" style="font-family: 'Mitr', sans-serif;" id="{{tag}}">{{tag}}</a>
+				<script type="text/javascript">document.getElementById("{{tag}}").style.backgroundColor = tag_color['{{tag}}'];</script>
+			{% endfor %}
+			</span>
+            <!-- <span class="meta">{{page.date | date: "%-d %B %Y" }}</span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+		<!-- <header class="page-header-post" role="banner">
 			<h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-			<!-- สร้าง list Tags -->
 			<a style="color: black; font-weight: bold">Tag:</a>
 			{% for tag in page.tags%}
 				<a href="#" class="badge badge-primary">{{tag}}</a>
 			{% endfor %}
 		</header>
-
+ -->
 
 		<!-- Content จากแต่ละ page จมาลงส่วนนี้ -->
-		<main id="content" class="main-content" role="main" style="text-align: justify; font-size: 15pt; color: black; line-height: 1.8;">
+		<main id="content" class="main-content" role="main" style="text-align: justify; font-size: 15pt; color: black; line-height: 1.8;font-family: 'Sarabun', sans-serif;">
 		  {{ content }}
 
-		  <footer class="site-footer">
+		  <!-- <footer class="site-footer">
 		    {% if site.github.is_project_page %}
 				<span class="site-footer-owner">
 					<a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a>
@@ -86,7 +147,7 @@
 				</span>
 		    {% endif %}
 		    <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
-		  </footer>
+		  </footer> -->
 		</main>
 	</body>
 </html>
