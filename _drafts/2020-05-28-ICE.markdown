@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "ICE plot"
+date:   2020-05-28 18:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/Q-learning.png
+img_header: /assets/img/header/Q-learning.png
+description: "บทความนี้จะพูดถึง ICE plot ซึ่งเป็นวิธีหนึ่งในการหาความสัมพันธ์ระหว่างฟีเจอร์กับผลการทำนาย ซึ่งต่อยอดมาจาก PDP plot เพื่อให้เราสามารถเห็น heterogeneous effect ได้"
+tags: ['machine learning','data science','model interpretation']
+---
+
+
+
+
+
