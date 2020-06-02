@@ -279,5 +279,8 @@ Markov Decision Process เป็นระบบแบบหนึ่งที�
 
 	![alt text](/assets/img/Q-learning/Plan.png)
 
+Reference:
+- Introduction to Reinforcement Learning (Richard S. Sutton, Andrew Barto)
+
 
 
