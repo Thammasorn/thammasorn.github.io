@@ -8,6 +8,8 @@ description: "บทความนี้จะพูดถึง Deep Q-Learnin
 tags: ['reinforcement learning', 'deep learning']
 ---
 
+!!! กรุณาอ่าน <a href="https://thammasorn.github.io/2020/05/03/Q-learning.html" style="color: red;">Q learning</a> ก่อน
+
 #### List of Variable and Function
 - $$s_t$$ = state ณ เวลา $$t$$
 - $$a_t$$ = action ณ เวลา $$t$$
