@@ -2,9 +2,9 @@
 layout: post
 title:  "Deep Q Learning (DQN)"
 date:   2020-06-03 18:00:00 +0700
-img_thumbnail: /assets/img/thumbnail/DQN.jpg
+img_thumbnail: /assets/img/thumbnail/DQN.png
 img_header: /assets/img/header/DQN.jpg
-description: "บทความนี้จะพูดถึง Q-Learning ซึ่งเป็น reinforcement algorithm ที่เป็นพื้นฐานของหลาย ๆ reinforcement algorithm ในปัจจุบัน"
+description: "บทความนี้จะพูดถึง Deep Q-Learning ซึ่งเป็นพัฒนาการสำคัญจาก Q learning โดยการใช้ neural network ในการประมาณค่า Q value แทนที่การเก็บค่า Q ในตาราง"
 tags: ['reinforcement learning', 'deep learning']
 ---
 
