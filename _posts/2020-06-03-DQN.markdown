@@ -60,7 +60,7 @@ Markov Decision Process เป็นระบบแบบหนึ่งที�
 ## ขั้นตอนการเทรน neural network เพื่อประมาณค่า Q
 ขั้นตอนโดยหลัก ๆ แล้วก็จะคล้ายคลึงกับใน Q-learning ก็คือ การปล่อยให้ agent เราได้ interact กับ environment และในแต่ละ timestep มันจะเก็บ experience หรือ $$\{s_t,a_t,r_t,s_{t+1}\}$$ มาเพื่ออัพเดทค่า Q
 
-![alt text](/assets/img/DQN/pseudo-code.png)
+![alt text](/assets/img/DQN/pseudo-code.png) Ref: <a href="https://arxiv.org/pdf/1312.5602.pdf">Playing Atari with Deep Reinforcement Learning</a>
 
 แต่จะมีจุดแตกต่างกันดังนี้ คือ ใน Deep Q Learning นั้นเรามีการใช้เทคนิคที่ชื่อว่า Experience Replay ซึ่งจะช่วยทำให้เราเทรน neural network ได้อย่างมีประสิทธิภาพ
 
@@ -106,7 +106,7 @@ Markov Decision Process เป็นระบบแบบหนึ่งที�
 
 โดยที่ในการเทรนโมเดลแต่ละครั้งนั้น เราจะอัพเดทเฉพาะ $$\theta$$ และในทุก ๆ ช่วงที่กำหนดไว้ เราจะก๊อปค่า $$\theta$$ ไปใส่ให้ $$\theta^-$$ ดังแสดงใน pseudo-code ด้านล่าง
 
-![alt text](/assets/img/DQN/pseudo-code-2.png)
+![alt text](/assets/img/DQN/pseudo-code-2.png)Ref: <a href='https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf'>Human-level control through deep reinforcement learning</a>
 
 
 ## Implementation
@@ -377,7 +377,7 @@ plt.ylabel('Reward')
 
 ## Reference:
 - <a href='https://arxiv.org/pdf/1312.5602.pdf'>Playing Atari with Deep Reinforcement Learning</a>
-- <a href='https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf'>level control through deep reinforcement learning</a>
+- <a href='https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf'>Human-level control through deep reinforcement learning</a>
 
 
 
