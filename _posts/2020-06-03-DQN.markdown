@@ -283,11 +283,9 @@ Action มี 4 actions ด้วยกัน ได้แก่
 
 		![alt text](/assets/img/DQN/pseudo-code-part-1.png)
 
-		จะเห็นได้ว่า เราใช้วิธีคูณด้วย ```(1-batch[:,4])``` แทนที่จะแยกเคสเหมือนใน pseodo code
+		จะเห็นได้ว่า เราใช้วิธีคูณด้วย ```(1-batch[:,4])``` แทนที่จะแยกเคสเหมือนใน pseodo code โดยที่ ```batch[:,4``` คือ list ของค่า boolean ที่บอกว่า episode จบลงหลัง experience นั้นหรือไม่ (True คือจบ, False คือยังไม่จบ)
 
-		>ปล. batch[:,4] คือ list ของค่า done ซึ่งเป็น boolean ที่บอกว่า episode จบลงหลัง experience นั้นหรือไม่ (True คือจบ, False คือยังไม่จบ)
-
-		โดยที่ขั้นตอนโดยละเอียดมีดังนี้ 
+		เราสามารถกระจายขั้นตอนนี้ออกมาโดยละเอียดได้ดังนี้ 
 		- ก่อนอื่น เอา next state ไปเข้า neural network และหาค่า max ของ Q(s',a) ออกมาก่อน
 			```python
 			...np.max(target_network.predict(np.stack(batch[:,3])),axis=1)) * (1-batch[:,4])...
@@ -295,8 +293,8 @@ Action มี 4 actions ด้วยกัน ได้แก่
 
 			![alt text](/assets/img/DQN/step-2-1.png)
 
-		- ต่อมาเอาค่า max ของ Q(s',a) มารวมกับ reward เพื่อสร้างเป็นค่า target value ตามสูตร Bellman Equation
-			> รูปด้านล่างสมมติให้ reward discount factor เป็น 0.9
+		- ต่อมาเอาค่า max ของ Q(s',a) มารวมกับ reward เพื่อสร้างเป็นค่า target value ตามสูตร Bellman Equation<br>
+			**หมายเหตุ รูปด้านล่างสมมติให้ reward discount factor เป็น 0.9
 
 			![alt text](/assets/img/DQN/step-2-2.png)
 
@@ -340,7 +338,9 @@ plt.ylabel('Reward')
 ![alt text](/assets/img/DQN/reward-chart.png)
 
 
-ดูกันว่าเมื่อเทรนไปเรื่อย ๆ แล้วยานลงจอดได้แบบไหนกันบ้าง
+ดูกันว่าเมื่อเทรนไปเรื่อย ๆ แล้วยานลงจอดได้แบบไหนกันบ้าง 
+
+>ปล. โค้ดในการทำ VDO หรือไฟล์ gif อยู่ใน notebook ที่แปะไว้ให้นะครับ
 
 <div class="container-fluid">
 	<div class="row">
