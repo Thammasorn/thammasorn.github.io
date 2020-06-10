@@ -5,7 +5,7 @@ date:   2020-06-03 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/lime.png
 img_header: /assets/img/header/lime.jpg
 description: "บทความนี้จะพูดถึงการหาว่าแต่ละฟีเจอร์ส่งผลต่อผลการทำนายของแต่ละ instance อย่างไรบ้างด้วยการใช้ LIME"
-tags: ['machine learning', 'local interpretation']
+tags: ['machine learning','deep learning', 'local interpretation']
 ---
 
 # Learning Performance vs. Interpretability
