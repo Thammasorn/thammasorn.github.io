@@ -66,7 +66,7 @@ LIME ย่อมาจาก <b>L</b>ocal <b>I</b>nterpretable <b>M</b>odel-agn
 
 ยกตัวอย่างดังรูปด้านล่าง
 
-![alt text](/assets/img/lime/toy.png)
+![alt text](/assets/img/lime/Toy.png)
 Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust You?”,Explaining the Predictions of Any Classifier</a>
 
 ดังรูป สมมติเราใช้ neural network ในการแยกคลาส <span style="color: red;">+</span> กับคลาส <span style="color: blue;">o</span> ออกจากกันด้วยฟีเจอร์ $$x_1$$ และ $$x_2$$ ต่อมาเราเกิดอยากรู้ว่าที่จุด <span style="color: red; font-weight: bold;">+ (ตัวหนา)</span> นั้น ทำไมถึงถูกทำนายออกมาเป็น  class <span style="color: red;">+</span> ได้ (อยากรู้ว่า $$x_1$$ และ $$x_2$$ ส่งผลอย่างไร ต่อ probability ในการเป็น class +)
@@ -102,13 +102,13 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	- $$x$$ คือ datapoint ที่เราสนใจ
 	- $$D(x,z)$$ คือระยะห่างระหว่าง datapoint ที่เราสนใจ $$x$$ กับ sample นั้น ๆ $$z$$ ซึ่งการคำนวณ distance นี้จะคำนวณด้วยฟังก์ชันอะไรก็ได้ ขึ้นอยู่กับชนิดของ data เช่น เป็น euclidean distance เมื่อข้อมูลเป็นตัวเลข, เป็น cosine distance เมื่อข้อมูลเป็น text
 		- ยิ่งค่า $$D(x,z)$$ มากเท่าไหร่ค่า weight $$\pi_x(z)$$ ของ sample นั้น ๆ จะยิ่งน้อยลงเท่านั้น
-	- $$\sigma^2$$ คือขนาด kernel
+	- $$\sigma^2$$ คือขนาด kernel ซึ่งก็เป็นตัวแปรที่เราต้องกำหนด
 		- ยิ่งเยอะจะยิ่งให้ความสำคัญกับ sample ที่อยู่ไกล ๆ มากขึ้น
 		- ยิ่งน้อยจะยิ่งให้ความสำคัญกับ sample ที่อยู่ใกล้ ๆ มากขึ้น 
 
 - $$\Omega(g)$$ คือค่าความ complexity ของ g
 
-จากสมการที่ \eqref{eq:objective} นั้นเราสนใจเทอม $$\mathcal{L}(f,g,\pi_x)$$ เป็นหลัก ซึ่งมันคือค่าที่ช่วยเราวัดว่าตัว explainer นั้น สามารถให้ผลได้เหมือนกับโมเดลจริง ๆ ที่เราใช้ได้ขนาดไหน 
+จากสมการที่ \eqref{eq:objective} นั้น เราสนใจเทอม $$\mathcal{L}(f,g,\pi_x)$$ เป็นหลัก ซึ่งมันคือค่าที่ช่วยเราวัดว่าตัว explainer นั้น สามารถให้ผลได้เหมือนกับโมเดลจริง ๆ ที่เราใช้ได้ขนาดไหน 
 > ยิ่ง $$\mathcal{L}(f,g,\pi_x)$$ น้อยแสดงว่า ตัว explainer เราสามารถให้ผลการทำนายได้ใกล้เคียงกับโมเดลจริง ๆ ที่เราใช้ <span style="color: green">ซึ่งก็สามารถ imply ต่อไปได้ว่าการที่เราพยายามหา contribution ของแต่ละฟีเจอร์ต่อผลการทำนายจาก explainer นั้นจะให้ค่า contribution ใกล้เคียงกับที่เราหาได้จากของโมเดลจริง ๆ </span> อย่างไรก็ตาม เราไม่รู้นะว่าค่า contribution ที่คำนวณจากโมเดลจริง ๆ เป็นเท่าไหร่ เพราะมัน complex เกินไป
 
 
@@ -262,6 +262,9 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	lr = LinearRegression()
 	lr_model = lr.fit(X=Z_dat, y=f_z, sample_weight=pi.ravel())
 	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/step-6.png" /></div>
+
 
 7. ดู coefficient ของแต่ละฟีเจอร์ในโมเดล $$g$$ เราก็จะรู้ว่า แต่ละฟีเจอร์ใน $$z'$$ (ในที่นี้คือแต่ละ super pixel) ส่งผลยังไงกับผลการทำนายบ้าง 
 	- อย่างในกรณีนี้จะทำการเลือก superpixel ที่มี coeffficient ที่มากที่สุดมา 10 อันดับ มาพล็อตดูว่า โมเดลเราดู segment ไหน ถึงบอกว่านี่คือรูปของ acoustic guitar 
