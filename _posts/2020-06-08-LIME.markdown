@@ -1,0 +1,315 @@
+---
+layout: post
+title:  "ทำไมถึง predict แบบนี้กันนะ? (LIME)"
+date:   2020-06-03 18:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/lime
+img_header: /assets/img/header/lime.jpg
+description: "บทความนี้จะพูดถึงการหาว่าแต่ละฟีเจอร์ส่งผลต่อผลการทำนายของแต่ละ instance อย่างไรบ้างด้วยการใช้ LIME"
+tags: ['machine learning', 'local interpretation']
+---
+
+# Learning Performance vs. Interpretability
+
+ในความเป็นจริงแล้ว โมเดลที่เราแปลความหมายได้ (มี interpretability) กับ โมเดลที่มีความสามารถในการเรียนรู้ complex function มาก ๆ (มี learning performance) นั้นมักจะสวนทางกัน
+
+
+![alt text](/assets/img/lime/interpret-vs-learning-perf.png)
+
+ยกตัวอย่างเช่นใน linear regression คือเราพยายามจะโมเดลข้อมูลด้วยสมการเส้นตรง 
+
+\begin{equation}
+\label{eq:linear_reg}
+   y= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n
+\end{equation}
+
+เพราะฉะนั้น ถ้าเราอยากรู้่ว่า effect ของฟีเจอร์ $$x_1$$ ต่อผลทำนาย $$y$$ เป็นเท่าไหร่ เราก็แค่ดูค่า $$\beta_1$$ การที่เป็นแบบนี้คือเราสามารถแปลความหมาย หรือดูพฤติกรรมของโมเดลมันได้ ซึ่งเราทำได้เพราะว่าโมเดลมันเป็นสมการง่าย ๆ 
+
+แต่ด้วยความที่มันเป็นสมการง่าย ๆ มันก็ไม่สามารถใช้กับปัญหาที่ complex มากนัก ซึ่งเราก็เลยต้องขยับไปใช้พวกโมเดลที่ complex ขึ้นไป เช่น neural network แต่ว่าใน neural network นั้น เต็มไปด้วยตัวแปร weight และ bias จำนวนมาก การที่เราจะไปไล่แกะสมการของ neural network ออกมาดูมันก็เป็นไปไม่ได้
+
+
+# ทำไมการหาว่า Model คิดอย่างไรถึงสำคัญ ?
+1. อาจจะช่วยหา insight ของ business ได้ เช่นถ้าเราสร้างโมเดลทำนายราคาบ้านขึ้นมาด้วยการใช้ neural network  ซึ่งสมมติว่าแม่นมาก แล้วเกิดเราอยากรู้ว่าทำไมบ้านแต่ละหลังถึงได้ราคานี้ล่ะ? ฟีเจอร์ใดเป็นส่วนเสริมราคาบ้านและฟีเจอร์ใดเป็นส่วนทำให้ราคาบ้านถูกลง?
+
+2. ช่วยตรวจสอบความน่าเชื่อถือให้กับโมเดลและ dataset 
+
+	![alt text](/assets/img/lime/compare.png)
+	Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust You?”,Explaining the Predictions of Any Classifier</a>
+
+	ยกตัวอย่างดังรูปด้านบน เค้าทำ text classification แบ่งว่า text นั้นเกี่ยวข้องกับ "Christianity" หรือ "Atheism" ผลการเทรนข้อมูลจากสอง model หรือ algorithm นั้นพบว่าค่า accuracy ใน validation set ของ algorithm ที่ 2 นั้นมากกว่า algorithm ที่ 1
+
+	แต่ว่าเมื่อเค้าหยิบ text มาอันนึง (instance นึง) มาหาว่าทำไม text นี้ถึงถูกทำนายว่าเกี่ยวกับ "Atheism" ด้วยการใช้ LIME ปรากฎว่า 
+
+	- algorithm แรกให้ความสนใจไปที่คำว่า {God, mean, anyone, this, koresh, through}
+	- algorithm ที่สองให้ความสนใจกับคำว่า {Posting, Host, Re, by, in , Nntp} 
+
+	จะเห็นได้ว่า algorithm แรกนั้นน่าเชื่อถือมากกว่า เนื่องจากคำที่มันสนใจนั้น มีความ make sense กว่า แต่ที่จริงแล้วอีกอย่างนึงที่พบก็คือ dataset นี้มีปัญหา ซึ่งเค้าพบว่าคำว่า Posting นั้นโผล่อยู่ในทั้ง training และ validation set โดยที่ 99% ของ text ที่มีคำว่า Posting นั้น เป็น class "Altheism" โมเดลที่ 2 มันเลย overfit กับคำนี้ไปเลย 
+
+
+# LIME คืออะไร?
+
+LIME ย่อมาจาก <b>L</b>ocal <b>I</b>nterpretable <b>M</b>odel-agnostic <b>E</b>xplanations ซึ่งหมายความว่า
+
+- Local ซึ่งหมายความว่า <i><u>LIME เป็นวิธีในการหา contribution ของแต่ละ feature บนผลการทำนายของ instance เดียว</u></i> (หรือก็คือข้อมูล row เดียว/ รูปเดียว/ ฯลฯ) เช่น ทำไมบ้านหลังนี้ถึงราคาเท่านี้? ทำไม text ที่ให้มาถึงเป็น positive? ทำไมรูปนี้ถึงเป็นรูปหมา? โดยจะทำการหาว่าฟีเจอร์ใด ส่งผลต่อผลการทำนายเท่าใดบ้าง ซึ่งจะแตกต่างกับวิธี <a href="https://thammasorn.github.io/2020/05/03/PDP.html">PDP</a> หรือ <a href="https://thammasorn.github.io/2020/05/28/ICE.html">ICE</a> plot ที่เราดูภาพโดยรวมทั้งโมเดลว่าแต่ละฟีเจอร์มีผลต่อผลการทำนายของทั้ง dataset อย่างไรบ้าง
+
+- Interpretable ก็แปลตรงตัวเลยคือ LIME เป็นวิธีในการแปลพฤติกรรมของโมเดลที่เข้าใจยาก ๆ ออกมาให้คนปกติอย่างเรา ๆ สามารถเข้าใจได้
+
+- Model-Agnostic หมายความว่าวิธี LIME นั้น สามารถใช้ได้กับทุก model ไม่ว่า model นั้นจะเป็นพวก model ที่สามารถอ่านพฤติกรรมมันได้ (เช่น linear regression, decision tree) หรือ model นั้นจะ complex มากจนเราไม่รู้พฤติกรรมข้างในของมัน (เช่น neural network) ซึ่งก็คือเราสามารถมองโมเดลที่เราใช้เป็น black-box ได้เลย
+
+ซึ่ง LIME นี้ คนออกแบบเค้าออกแบบมาให้ใช้ได้กับทั้งข้อมูลแบบ table, text, แล้วก็ image เลยทีเดียวเชียว
+
+
+# Concept ของ LIME
+
+แนวคิดของ LIME คือแนวคิดของ surrogate model ซึ่งเป็นการใช้ model อื่นที่เบสิคและสามารถแปลความได้ (เช่น linear regression) มาช่วยอธิบายผลการทำนายในบริเวณของข้อมูลที่เราสนใจ แทนที่จะไปนั่งหาว่า model เราทั้งหมดคิดยังไง 
+
+> model ที่เบสิคที่ใช้ในการแปลความเราเรียกว่า explainer 
+
+ยกตัวอย่างดังรูปด้านล่าง
+
+![alt text](/assets/img/lime/toy.png)
+Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust You?”,Explaining the Predictions of Any Classifier</a>
+
+ดังรูป สมมติเราใช้ neural network ในการแยกคลาส <span style="color: red;">+</span> กับคลาส <span style="color: blue;">o</span> ออกจากกันด้วยฟีเจอร์ $$x_1$$ และ $$x_2$$ ต่อมาเราเกิดอยากรู้ว่าที่จุด <span style="color: red; font-weight: bold;">+ (ตัวหนา)</span> นั้น ทำไมถึงถูกทำนายออกมาเป็น  class <span style="color: red;">+</span> ได้ (อยากรู้ว่า $$x_1$$ และ $$x_2$$ ส่งผลอย่างไร ต่อ probability ในการเป็น class +)
+
+คือถ้าเราอยากรู้แค่การอธิบายบนจุดนั้น เราก็ไม่จำเป็นต้องไปนั่งไล่แกะ complex function ใน neural network ให้เวียนหัวกัน (ซึ่งจริง ๆ มันก็ไม่น่ามีใครทำนะ) แต่ว่าเราสามารถพุ่งเป้าในการวิเคราะห์ไปที่จุดนั้น และข้อมูลที่ใกล้เคียงจุดนั้น ๆ และสร้าง explainer มา classify ข้อมูลในละแวกนั้นก็พอ ซึ่งจะเห็นจากรูปด้านบนว่า explainer เราสร้าง boundary decsion ใหม่ที่เป็นเส้นตรงธรรมดาขึ้นมาเส้นนึง ในขณะที่จริง ๆ แล้ว boundary decision ของโมเดลเรามันยึกยือกว่านั้น (เส้นสีเขียว) ซึ่งเราไม่ได้แคร์ว่าเส้นยึกยือทั้งหมดนั้นจะเป็นยังไง เราแคร์แค่ ณ จุดที่เราสนใจ มันเป็นยังไง
+
+โดยที่ในการเทรน Explainer นั้น (อย่าลืมว่า explainer ก็เป็น machine learning model เหมือนกัน และเราก็ต้องเทรนเหมือนกัน) เราจะ weight ข้อมูลแต่ละจุดด้วยค่าความเหมือนกัน (proximity) ของ sample นั้น ๆ กับข้อมูลจุดที่เราสนใจ อย่างเช่นรูปด้านบนนั้น ขนาดของ <span style="color: red;">+</span> และ <span style="color: blue;">o</span> บ่งบอกถึง weight ของข้อมูลนั้น ๆ ในการเทรน explainer จะเห็นได้ว่าจุดที่อยู่ใกล้จะมีขนาดใหญ่ กว่าจุดที่อยู่ไกล ซึ่งหมายความว่ายิ่ง sample มีความใกล้เคียงกับข้อมูลที่เราสนใจมากเท่าไหร่ เรายิ่งให้ความสำคัญมันมากเท่านั้น
+
+<span style="color:red;">*** ส่วนด้านล่างนี้ ถ้าอยากข้าม ก็ข้ามไปเลยก็ได้ อ่านอีกที section ขั้นตอนของ LIME เลย</span>
+
+ซึ่งถ้าเราเขียน objective ของ LIME ให้อยู่ในรูปของสมการจะได้ว่า LIME นั้นต้องการจะ minimize สมการด้านล่าง
+
+\begin{equation}
+\label{eq:objective}
+   \xi (x) = argmin_{g \in G} \mathcal{L}(f,g,\pi_x) + \Omega(g)
+\end{equation}
+
+โดยที่
+- $$f$$ คือ model ที่เราใช้ทำนายจริง ๆ 
+- $$G$$ คือ เดอะแก๊งของ model ที่เราสามารถแปลความได้โดยง่าย เช่น linear regression, decision tree แต่ในเปเปอร์ original เค้าใช้แค่ linear model
+- $$g$$ คือ explainer หรือโมเดลที่เราใช้หา contribution ของแต่ละฟีเจอร์ต่อผลการทำนาย ซึ่งเราก็เลือกโมเดลมาซักอันนึงจาก $$G$$ น่ะแหละ
+- $$\pi_x$$ คือ function ที่คำนวณ weight ของแต่ละ sample ซึ่งคิดจากความเหมือนกันของ sample แต่ละจุดที่เราใช้เทรน explainer กับจุดที่เราสนใจ 
+	
+
+	\begin{equation}
+	\label{eq:pi}
+	   \pi_x(z) = e^{-\frac{D(x,z)^2}{\sigma^2}}
+	\end{equation}
+
+	ซึ่งในเปเปอร์เค้าใช้สมการที่ \eqref{eq:pi} คิดค่า weight ของ sample $$z$$ โดยที่
+	- $$x$$ คือ datapoint ที่เราสนใจ
+	- $$D(x,z)$$ คือระยะห่างระหว่าง datapoint ที่เราสนใจ $$x$$ กับ sample นั้น ๆ $$z$$ ซึ่งการคำนวณ distance นี้จะคำนวณด้วยฟังก์ชันอะไรก็ได้ ขึ้นอยู่กับชนิดของ data เช่น เป็น euclidean distance เมื่อข้อมูลเป็นตัวเลข, เป็น cosine distance เมื่อข้อมูลเป็น text
+		- ยิ่งค่า $$D(x,z)$$ มากเท่าไหร่ค่า weight $$\pi_x(z)$$ ของ sample นั้น ๆ จะยิ่งน้อยลงเท่านั้น
+	- $$\sigma^2$$ คือขนาด kernel
+		- ยิ่งเยอะจะยิ่งให้ความสำคัญกับ sample ที่อยู่ไกล ๆ มากขึ้น
+		- ยิ่งน้อยจะยิ่งให้ความสำคัญกับ sample ที่อยู่ใกล้ ๆ มากขึ้น 
+
+- $$\Omega(g)$$ คือค่าความ complexity ของ g
+
+จากสมการที่ \eqref{eq:objective} นั้นเราสนใจเทอม $$\mathcal{L}(f,g,\pi_x)$$ เป็นหลัก ซึ่งมันคือค่าที่ช่วยเราวัดว่าตัว explainer นั้น สามารถให้ผลได้เหมือนกับโมเดลจริง ๆ ที่เราใช้ได้ขนาดไหน 
+> ยิ่ง $$\mathcal{L}(f,g,\pi_x)$$ น้อยแสดงว่า ตัว explainer เราสามารถให้ผลการทำนายได้ใกล้เคียงกับโมเดลจริง ๆ ที่เราใช้ <span style="color: green">ซึ่งก็สามารถ imply ต่อไปได้ว่าการที่เราพยายามหา contribution ของแต่ละฟีเจอร์ต่อผลการทำนายจาก explainer นั้นจะให้ค่า contribution ใกล้เคียงกับที่เราหาได้จากของโมเดลจริง ๆ </span> อย่างไรก็ตาม เราไม่รู้นะว่าค่า contribution ที่คำนวณจากโมเดลจริง ๆ เป็นเท่าไหร่ เพราะมัน complex เกินไป
+
+
+ซึ่งเราสามารถเขียนสมการของเทอมนี้ออกมาได้ดังนี้ 
+
+\begin{equation}
+\label{eq:loss}
+   \mathcal{L}(f,g,\pi_x) = \sum_{z,z' \in \mathcal{Z}} \pi_x(z) (f(z)-g(z'))^2
+\end{equation}
+
+โดยที่
+- $$f(z)$$ คือผลการทำนายของโมเดลหลักของเรา จาก input sample $$z$$
+- $$g(z')$$ คือผลการทำนายของ explainer จาก input sample $$z'$$ 
+
+	ถึงตอนนี้อาจจะงงกันว่า $$f(z)$$ แต่ทำไม $$g(z')$$ แล้วตัว $$'$$ มาจากไหน ทำไมเราต้องแยก $$z$$ กับ $$z'$$ ด้วย?
+
+	 ที่จริงแล้วตัว input ของ explainer $$z'$$ อาจจะอยู่ในรูปแบบที่แตกต่างจากตัว input ของโมเดลหลัก $$z$$ เราก็ได้เพราะ
+	
+	- ต้องอย่าลืมว่า explainer มันเป็นโมเดลเบสิค ๆ น่ารัก ๆ แล้วเราจะเทรนมันด้วย input ที่มีเป็นล้านฟีเจอร์ เช่น รูป (มีเป็นล้าน pixel) เลย ก็คงลำบาก 
+	- อีกอย่างก็คือ จริง ๆ แล้ว user หรือเรา ๆ เนี่ย ก็คงไม่ได้อยากรู้ไปถึงขนาดว่าแต่ละ pixel มี contribution เท่าไหร่ต่อผลการ classify ของรูปที่กำหนดให้ เราก็คงกรุ๊ป ๆ มันเป็นพาร์ท ๆ ก่อน (เช่นกรุ๊ปเป็น super-pixel) แล้วค่อยหาว่าพาร์ทนี้มี contribution ต่อผลการทำนายรึเปล่า ซึ่งพอกรุ๊ปเป็นพาร์ท ๆ เราก็สามารถ represent มันได้ในอีกรูปแบบหนึ่ง ซึ่งเดี๋ยวจะยกตัวอย่างในพาร์ทข้างล่าง
+
+	ซึ่งก็คือเราจะมีฟังก์ชันนึงที่เอาไว้แปลงค่า $$z'$$ ไปเป็น $$z$$ 
+
+	\begin{equation}
+	\label{eq:h}
+	   z = h(z')
+	\end{equation}
+
+	ซึ่ง function $$h(z')$$ นี้ก็จะเปลี่ยนไปตามแต่ประเภทข้อมูล
+
+
+นอกจากนี้ จากสมการที่ \eqref{eq:objective} ถ้าเราคิดดี ๆ จะพบว่าเทอม $$\mathcal{L}(f,g,\pi_x)$$ กับ $$\Omega(g)$$ มักจะกลับกัน หรือก็คือถ้า $$\mathcal{L}(f,g,\pi_x)$$ มีค่ามาก อาจจะเป็นเพราะว่า ตัว explainer $$g$$ นั้น มี learning performance ต่ำ ไม่สามารถบิดไปตาม complex function ของตัวโมเดลหลัก $$f$$ ได้ แต่ถ้าเราเพิ่ม learning performance มันก็คือการเพิ่ม complexity หรือเทอม $$\Omega(g)$$ ไปด้วย
+
+# ขั้นตอนของ LIME
+
+ขั้นตอนของการทำ LIME นั้น สามารถสรุปออกมาเป็นข้อ ๆ ดังนี้ ซึ่งในที่นี้จะขอยกตัวอย่างเป็น image classification แล้วกันนะครับ
+
+<u><b>สิ่งที่ต้องมีก่อนเริ่มทำ</b></u> 
+- Dataset $$X$$
+- ML model $$f(x)$$ ที่เทรนกับข้อมูล $$X$$ มาแล้ว เช่น neural network, SVC, ฯลฯ
+	- ในบทความนี้จะขอใช้โมเดล Google pre-trained Inception V3 เลยแล้วกัน จะได้ไม่ต้องเทรนใหม่
+
+		```python
+		import keras
+		model = keras.applications.inception_v3.InceptionV3()
+		```
+
+- จุดข้อมูลที่เราสนใจ $$x \in X$$ (1 rows, 1 รูป, 1 ฯลฯ)
+	- จะขอเลือกเป็นรูปที่เค้าใช้ในเปเปอร์เลยแล้วกัน 
+
+		```python
+		import skimage.io 
+		x = skimage.io.imread("dog-guitar.jpg")
+		x = skimage.transform.resize(x, (299,299)) 
+		skimage.io.imshow(x)
+		```
+		<div style="text-align:center;"><img src="/assets/img/lime/dog-guitar.jpg" /></div>
+
+	- ซึ่งรูปนี้ เมื่อเราเอาไปเข้าโมเดล Inception V3 มันจะบอกว่ารูปนี้คือ acoustic guitar แล้วเดี๋ยวเราจะมาหากันว่า โมเดลมันดูตรงไหนว่าเป็น acoustic guitar
+
+		```python
+		preds = model.predict(x.reshape((1,)+x.shape))
+		decode_predictions(preds)[0]
+
+		### Result
+		# [('n02676566', 'acoustic_guitar', 0.59938663),
+		#  ('n02099601', 'golden_retriever', 0.0535729),
+		#  ('n03272010', 'electric_guitar', 0.02401211),
+		#  ('n02099712', 'Labrador_retriever', 0.022983445),
+		#  ('n02787622', 'banjo', 0.0123473685)]
+		```
+
+
+- เลือกประเภทโมเดล $$g$$ สำหรับใช้เป็น explainer (ยังไม่เทรน)
+- ออกแบบฟังก์ชัน $$h$$ ที่เอาไว้แปลง representation ของฟีเจอร์ จาก input ฟีเจอร์ของ explainer ($$z'$$) ไปเป็น input ของ model หลัก ($$z$$) และฟังก์ชันสำหรับแปลงกลับ (ไม่จำเป็นก็ได้ สำหรับบางปัญหาที่ representation ของ input ของ model หลัก สามารถใช้ได้กับ explainer เลยก็ไม่ต้องแปลงก็ได้ เช่น ปัญหาใน toy problem (รูปแรก) ก็ไม่จำเป็นต้องมีฟังก์ชัน $$h$$)
+- ออกแบบฟังก์ชัน $$D$$ สำหรับคำนวณ distance ระหว่าง 2 datapoints
+
+<u><b>ขั้นตอน</b></u>
+
+1. แปลงจุดข้อมูลที่เราสนใจ $$x$$ ให้เป็น $$x'$$
+	- ซึ่งในปัญหาของ image นั้น เราจะทำการ segment รูปตามสี (แบ่ง super-pixel)
+	```python
+	from skimage.segmentation import slic,quickshift
+	from skimage.segmentation import mark_boundaries
+	import matplotlib.pyplot as plt
+	segments = quickshift(x, kernel_size=4, max_dist=200, ratio=0.2)
+	skimage.io.imshow(mark_boundaries(x, segments)) 
+	number_of_superpixel = np.unique(segments).shape[0]
+	print ('There are {} super-pixels in image'.format(number_of_superpixel)) # 60 super pixels
+	```	
+	<div style="text-align:center;"><img src="/assets/img/lime/dog-guitar-segment.png" /></div>
+
+	- แล้วเราก็จะทำการสร้าง array ที่เป็นเลข 1 ทั้งหมด และมีความยาวเท่ากับจำนวน superpixels ในรูป ซึ่งแต่ละตำแหน่งของสมาชิกใน array จะอิงไปแต่ละ super pixel และตัวเลขก็คือแทนการเปิด-ปิดส่วนนั้น ๆ ของภาพ (1 เปิด, 0 ปิด) จะเห็นได้ว่าในรูป $$x$$ ของเรานั้น คือรูปเต็ม ๆ ที่สมบูรณ์ ตัว $$x'$$ เราเลยเป็น 1 ทั้งหมด
+	```python
+	x_dat = np.ones(number_of_superpixel)
+	```	
+
+	<div style="text-align:center;"><img src="/assets/img/lime/step-1.png" /></div>
+
+2. สร้าง fake dataset หรือ purturbed dataset โดยการ permute ค่าของแต่ละฟีเจอร์ใน $$x'$$ ในที่นี้จะขอแทน fake dataset ว่า $$Z'$$ และแทน datapoint แต่ละจุดของ $$Z'$$ ด้วย $$z'$$
+	- ซึ่งเราจะทำการสุ่มสร้าง array ที่ประกอบไปด้วย 0 และ 1 มีความยาวเท่ากับจำนวน superpixels ขึ้นมาหลาย ๆ array
+		```python
+		number_of_fake_datapoints = 200
+		Z_dat = np.random.randint(0,2,size=(number_of_fake_datapoints,number_of_superpixel))
+		# Z_dat shape is (200,60)
+		```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/Z_dat.png" /></div>
+
+
+3. เปลี่ยน fake dataset ซึ่งตอนนี้อยู่ใน representation ของ input ของ explainer ให้อยู่ใน representation ของ input ของโมเดลหลัก หรือก็คือเปลี่ยน $$Z'$$ เป็น $$Z$$
+	
+	```python
+	Z = []
+	for i in range(number_of_fake_datapoints):
+	  z = np.nonzero(Z_dat[i])
+	  mask = np.isin(segments,z)
+	  z = x*mask[...,None]
+	  Z.append(z)
+	Z = np.array(Z)
+	Z.shape
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/step-3.png" /></div>
+
+4. นำ dataset $$Z$$ ไปเข้าโมเดล $$f$$ และหา probability ของ acoustic guitar ของแต่ละ fake datapoint ออกมา หรือก็คือจะได้ $$f(z)$$
+	
+	```python
+	# ดึงคอลัมน์ที่ 402 ซึ่งก็คือ index ของ probability ของ 'acoustic guitar'
+	f_z = model.predict(Z)[:,402]
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/step-4.png" /></div>
+
+
+5. หา distance ระหว่าง fake datapoint แต่ละจุดหรือ $$z'$$ กับข้อมูลจริงหรือ $$x'$$ ด้วยฟังก์ชัน $$D$$ และนำไปคำนวณ weight ของ fake datapoint นั้น ๆ ด้วยสมการที่ \eqref{eq:pi} (แต่ที่จริงสมการนี้เราจะ design เองใหม่ก็ได้) 
+	- หา distance ระหว่าง fake datapoint $$z'$$ กับ $$x'$$
+		```python
+		from sklearn.metrics import pairwise_distances
+		distance = pairwise_distances(x_dat.reshape(1,-1),Z_dat)
+		```
+	- คำนวณ weight หรือ $$\pi$$ ของแต่ละ $$z$$
+		```python
+		pi = np.sqrt(np.exp(-(distance ** 2) / kernel_width ** 2))
+		```
+6. นำ dataset $$Z'$$ ไปเทรนโมเดล explainer หรือ $$g$$ โดยที่มี label เป็น $$f(z)$$ ที่เพิ่งได้มาในข้อที่ 4 และกำหนด sample weight ตามค่า $$\pi$$ ด้วย
+	```python
+	from sklearn.linear_model import LinearRegression
+	lr = LinearRegression()
+	lr_model = lr.fit(X=Z_dat, y=f_z, sample_weight=pi.ravel())
+	```
+
+7. ดู coefficient ของแต่ละฟีเจอร์ในโมเดล $$g$$ เราก็จะรู้ว่า แต่ละฟีเจอร์ใน $$z'$$ (ในที่นี้คือแต่ละ super pixel) ส่งผลยังไงกับผลการทำนายบ้าง 
+	- อย่างในกรณีนี้จะทำการเลือก superpixel ที่มี coeffficient ที่มากที่สุดมา 10 อันดับ มาพล็อตดูว่า โมเดลเราดู segment ไหน ถึงบอกว่านี่คือรูปของ acoustic guitar 
+		```python
+		## เลือก index ของ 5 coefficient มีที่ค่าสูงที่สุด
+		importance_part = lr_model.coef_.argsort()[-5:][::-1]
+		## สร้างรูปแสดงส่วนที่ model เราดู
+		mask = np.isin(segments,importance_part)
+		importance_image = x*mask[...,None]
+		skimage.io.imshow((mark_boundaries(importance_image, segments)))
+		```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/acoustic_guitar.png" /></div>
+
+
+8. ที่นี้ถ้าเราย้อนไปดูจะพบกว่า โมเดลเราบอกว่ารูปนี้เป็นรูปของ golden retriever ด้วย เราก็ลองทำของ golden retriever บ้าง ด้วยการเปลี่ยน index ของ column ที่เราสนใจที่ข้อ 4 แล้วก็รันลงมาใหม่
+		
+	```python
+	#### ข้อ 4
+	f_z = model.predict(Z)
+	# ดึงคอลัมน์ที่ 207 ซึ่งก็คือ index ของ probability ของ 'golden retriever'
+	f_z = f_z[:,207] 
+	f_z.shape
+
+	#### ข้อ 5
+	from sklearn.metrics import pairwise_distances
+	kernel_width = 0.25
+	distance = pairwise_distances(x_dat.reshape(1,-1),Z_dat)
+	pi = np.sqrt(np.exp(-(distance ** 2) / kernel_width ** 2))
+	pi.shape
+
+	#### ข้อ 6
+	from sklearn.linear_model import LinearRegression
+	lr = LinearRegression()
+	lr_model = lr.fit(X=Z_dat, y=f_z, sample_weight=pi.ravel())
+
+	#### ข้อ 7
+	importance_part = lr_model.coef_.argsort()[-5:][::-1]
+	mask = np.isin(segments,importance_part)
+	importance_image = x*mask[...,None]
+	skimage.io.imshow((mark_boundaries(importance_image, segments)))
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/golden-3.png" /></div>
+
+
+<h1 style="color: red;">Discliamer</h1>
+รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบช้อผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
+
+## Reference:
+- <a href='https://arxiv.org/pdf/1602.04938.pdf'>“Why Should I Trust You?”, Explaining the Predictions of Any Classifier</a>
+- <a href='https://nbviewer.jupyter.org/url/arteagac.github.io/blog/lime_image.ipynb'>Interpretable Machine Learning with LIME for Image Classification</a>
+
+
+
