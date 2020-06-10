@@ -8,6 +8,19 @@ description: "บทความนี้จะพูดถึงการหา
 tags: ['machine learning','deep learning', 'local interpretation']
 ---
 
+### List of Variables
+- $X$ คือ dataset เช่น ข้อมูล 1000 rows, รูป 10000 รูป, ฯลฯ
+- $x$ คือข้อมูลจุดที่เราสนใจ ซึ่งเป็นสมาชิกของ dataset $X$ เช่น ข้อมูล row เดียว, รูป 1 รูป, ฯลฯ
+- $f$ คือโมเดลที่เทรนด้วย dataset $X$ ซึ่งเราจะเรียกว่าโมเดลหลัก
+- $Z$ คือ fake dataset หรือ perturbed dataset เป็น dataset ที่เรา generate ขึ้นมา
+- $z$ คือสมาชิกของ Z
+- $x'$ คือ x เวอร์ชันที่ถูก simplify หรือ transform ไปอยู่ในอีกรูปแบบหนึ่ง
+- $z'$ คือ z เวอร์ชันที่ถูก simplify หรือ transform ไปอยู่ในอีกรูปแบบหนึ่ง
+- $g$ คือ surrogate model หรือ explainer เป็นโมเดลที่เทรนด้วย $Z$ โดยที่ตั้งใจจะให้มันสามารถได้ผลการทำนายได้ใกล้เคียงกับโมเดล $f$ ซึ่งในบทความนี้โมเดล $g$ จะเป็น linear regression
+- $\pi_x(z)$ คือฟังก์ชันที่เอาไว้หาค่าความเหมือนกัน (proximity) ของ $x$ และ $z$ เพื่อใช้เป็น weight ในตอนเทรนโมเดล $g$
+- $\sigma^2$ คือความกว้าง kernel ใช้ในการคำนวณ $\pi$
+
+
 # Learning Performance vs. Interpretability
 
 ในความเป็นจริงแล้ว โมเดลที่เราแปลความหมายได้ (มี interpretability) กับ โมเดลที่มีความสามารถในการเรียนรู้ complex function มาก ๆ (มี learning performance) นั้นมักจะสวนทางกัน
@@ -95,7 +108,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 	\begin{equation}
 	\label{eq:pi}
-	   \pi_x(z) = e^{-\frac{D(x,z)^2}{\sigma^2}}
+	   \pi_x(z) = \sqrt{e^{-\frac{D(x,z)^2}{\sigma^2}}}
 	\end{equation}
 
 	ซึ่งในเปเปอร์เค้าใช้สมการที่ \eqref{eq:pi} คิดค่า weight ของ sample $$z$$ โดยที่
@@ -123,30 +136,139 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 - $$f(z)$$ คือผลการทำนายของโมเดลหลักของเรา จาก input sample $$z$$
 - $$g(z')$$ คือผลการทำนายของ explainer จาก input sample $$z'$$ 
 
-	ถึงตอนนี้อาจจะงงกันว่า $$f(z)$$ แต่ทำไม $$g(z')$$ แล้วตัว $$'$$ มาจากไหน ทำไมเราต้องแยก $$z$$ กับ $$z'$$ ด้วย?
+	ถึงตอนนี้อาจจะงงกันว่า $$f(z)$$ แต่ทำไม $$g(z')$$ แล้วตัว $$'$$ มาจากไหน ทำไมเราต้องแยก $$z$$ กับ $$z'$$ ด้วย? 
 
-	 ที่จริงแล้วตัว input ของ explainer $$z'$$ อาจจะอยู่ในรูปแบบที่แตกต่างจากตัว input ของโมเดลหลัก $$z$$ เราก็ได้เพราะ
-	
-	- ต้องอย่าลืมว่า explainer มันเป็นโมเดลเบสิค ๆ น่ารัก ๆ แล้วเราจะเทรนมันด้วย input ที่มีเป็นล้านฟีเจอร์ เช่น รูป (มีเป็นล้าน pixel) เลย ก็คงลำบาก 
-	- อีกอย่างก็คือ จริง ๆ แล้ว user หรือเรา ๆ เนี่ย ก็คงไม่ได้อยากรู้ไปถึงขนาดว่าแต่ละ pixel มี contribution เท่าไหร่ต่อผลการ classify ของรูปที่กำหนดให้ เราก็คงกรุ๊ป ๆ มันเป็นพาร์ท ๆ ก่อน (เช่นกรุ๊ปเป็น super-pixel) แล้วค่อยหาว่าพาร์ทนี้มี contribution ต่อผลการทำนายรึเปล่า ซึ่งพอกรุ๊ปเป็นพาร์ท ๆ เราก็สามารถ represent มันได้ในอีกรูปแบบหนึ่ง ซึ่งเดี๋ยวจะยกตัวอย่างในพาร์ทข้างล่าง
-
-	ซึ่งก็คือเราจะมีฟังก์ชันนึงที่เอาไว้แปลงค่า $$z'$$ ไปเป็น $$z$$ 
-
-	\begin{equation}
-	\label{eq:h}
-	   z = h(z')
-	\end{equation}
-
-	ซึ่ง function $$h(z')$$ นี้ก็จะเปลี่ยนไปตามแต่ประเภทข้อมูล
+	 ที่จริงแล้วตัว input ของ explainer $$z'$$ อาจจะอยู่ในรูปแบบที่แตกต่างจากตัว input ของโมเดลหลัก $$z$$ เราก็ได้ เพื่อให้เห็นภาพชัดเจนมากขึ้นจะอธิบายเพิ่มเติมใน section การใช้ LIME กับ Image ด้านล่าง
 
 
 นอกจากนี้ จากสมการที่ \eqref{eq:objective} ถ้าเราคิดดี ๆ จะพบว่าเทอม $$\mathcal{L}(f,g,\pi_x)$$ กับ $$\Omega(g)$$ มักจะกลับกัน หรือก็คือถ้า $$\mathcal{L}(f,g,\pi_x)$$ มีค่ามาก อาจจะเป็นเพราะว่า ตัว explainer $$g$$ นั้น มี learning performance ต่ำ ไม่สามารถบิดไปตาม complex function ของตัวโมเดลหลัก $$f$$ ได้ แต่ถ้าเราเพิ่ม learning performance มันก็คือการเพิ่ม complexity หรือเทอม $$\Omega(g)$$ ไปด้วย
 
-# ขั้นตอนของ LIME
+<!-- # ขั้นตอนของ LIME สำหรับ -->
 
-ขั้นตอนของการทำ LIME นั้น สามารถสรุปออกมาเป็นข้อ ๆ ดังนี้ ซึ่งในที่นี้จะขอยกตัวอย่างเป็น image classification แล้วกันนะครับ 
+# ขั้นตอนของ LIME โดยคร่าว (Toy Problem)
 
 > สำหรับโค้ดทั้งหมด สามารถดูได้ที่ <a href='https://colab.research.google.com/drive/1TL3YlU86UgWbTbR3vjg9de4yd65k9Wm5?usp=sharing'>link นี้ </a> ครับ
+
+<u><b>สิ่งที่ต้องมีก่อนเริ่มทำ</b></u> 
+- Dataset $$X$$
+	- ในที่นี้เราจะใช้ฟังก์ชัน ```sklearn.datasets.make_moons``` มาสร้าง dataset สำหรับ 2 classes ขึ้นมา
+
+		```python
+		from sklearn.datasets import make_moons
+		X,y = make_moons(n_samples=100, shuffle=True, noise=0.15, random_state=None)
+		from sklearn.preprocessing import MinMaxScaler
+		X = MinMaxScaler((-1,1)).fit_transform(X)
+		```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/moon-dataset.png" /></div>
+
+
+- ML model $$f(x)$$ ที่เทรนกับข้อมูล $$X$$ มาแล้ว เช่น neural network, SVC, ฯลฯ
+	- ในบทความนี้จะขอใช้โมเดล ```sklearn.svm.SVC```
+
+		```python
+		from sklearn.svm import SVC
+		svc = SVC(gamma=2, C=1, probability=True)
+		f = svc.fit(X,y)
+		```
+
+		ซึ่งเราจะได้ boundary decision หน้าตาแบบนี้ออกมา (สีของ scatter plot แทนผลการทำนาย สีม่วง class 0, สีเหลือง class 1)
+
+	<div style="text-align:center;"><img src="/assets/img/lime/boundary.png" /></div>
+
+
+- จุดข้อมูลที่เราสนใจ $$x \in X$$ 
+	- จะขอเลือกเป็นจุด $(-0.25,0.25)$ แล้วกัน
+	> ที่จริงแล้ว เราควรจะดึงซักจุดมาจาก dataset แต่เพื่อความง่าย เลยขอตั้งขึ้นมาเองนะ
+
+		```python
+		x = [-0.25,0.25]		
+		```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/interesting-point.png" /></div>
+
+	- ถ้าเราเอา datapoint นี้ไป predict จะพบว่า probability ของ class 1 นั้นคือ 0.28 เดี๋ยวเราจะมากันว่าในเลข 0.28 นี้มี contribution ของ $x1$ และ $x2$ อยู่ประมาณเท่าไหร่
+
+		```python
+		f.predict_proba(np.array([x]))	
+		## Result : array([[0.71393299, 0.28606701]])
+		```
+
+- เลือกประเภทโมเดล $$g$$ สำหรับใช้เป็น explainer (ยังไม่ต้องเทรน) 
+	- เราจะเลือกใช้เป็น linear regression
+- ออกแบบฟังก์ชัน $$D$$ สำหรับคำนวณ distance ระหว่าง 2 datapoints 
+	- เราจะใช้ euclidean distance 
+
+<u><b>ขั้นตอน</b></u>
+1. สร้าง fake dataset (บางที่ก็เรียกว่า perturbed dataset) ต่อจากนี้เราจะเรียก dataset นี้ว่า $Z$ และเรียกสมาชิกของ $Z$ ด้วยตัวแปร $z$
+	```python
+	number_of_fake_datapoints = 500
+	Z = np.random.normal(loc=[0,0], scale=0.5 ,size = (number_of_fake_datapoints,2))
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/fake-data.png" /></div>
+
+2. หา euclidean distance ระหว่าง fake dataset แต่ละจุด ($z$ แต่ละตัว) กับจุดที่เราสนใจ ($x$) และนำมาคำนวณ weight ($\pi$) ด้วยสมการที่ \eqref{eq:pi}
+	```python
+	## Calculate Distance
+	dist = np.linalg.norm(Z-np.array([x]), axis=1)#np.sum((Z - np.array(x))**2,axis=1) #np.linalg.norm(Z-np.array([x]), axis=1)
+	## Calculate Weight
+	kernel_width = 0.1
+	pi = np.sqrt(np.exp(-((dist ** 2) / kernel_width ** 2)))
+	```
+	<div style="text-align:center;"><img src="/assets/img/lime/weighted-fake.png" /></div>
+
+3. นำ dataset $Z$ ไป classify ด้วย model หลักของเรา ที่เราเทรนไว้แล้ว แล้วดึง probability ของ class ที่ 1 ออกมา (ขั้นตอนนี้คือการหา $f(z)$)
+	```python
+	f_z = f.predict_proba(Z)[:,1]
+	```
+
+4. สร้าง explainer ด้วยการเทรน Linear regression ด้วยข้อมูลใน dataset $Z$ และ label ใน $f(z)$ ที่หามาในข้อก่อนหน้า แล้วอย่าลืมตั้ง sample weight เป็น $\pi$ ด้วย 
+
+	```python
+	from sklearn.linear_model import LinearRegression
+	lr = LinearRegression(intercept=False)
+	explainer = lr.fit(X=Z, y=f_z, sample_weight=pi.ravel())
+	```
+
+	- แล้วก็ print ตัว coefficient ของ $x_1$ และ $x_2$ ออกมาดู
+		```python
+		print ('Coefficient: ', explainer.coef_)
+		print ('Intercept: ', explainer.intercept_)
+		# Result
+		Coefficient:  [-1.81405856 -0.76955154]
+		```
+
+	ก็คือเราได้สมการของ linear regression ดังนี้
+
+	\begin{equation}
+	\label{eq:reg_toy}
+	   probabilty \; of \; class \; 1 = x_1(-1.814) + x_2(-0.7695)
+	\end{equation}
+
+	แสดงว่า 
+	- contribution ของฟีเจอร์ $x_1$ ต่อ probability ของ class 1 ณ จุด $(-0.25,0.25)$ เท่ากับ $-0.25 \times -1.814 = +0.4535$
+	- contribution ของฟีเจอร์ $x_2$ ต่อ probability ของ class 2 ณ จุด $(-0.25,0.25)$ เท่ากับ $0.25 \times -0.7695 = -0.192$
+
+	เมื่่อรวม contribution ของทั้ง 2 ฟีเจอร์ เราจะได้ probability ในการเป็น class 1 ของจุด $x$ ที่ประมาณโดย explainer ได้เท่ากับ $0.4535 - 0.192 = 0.2615$ ซึ่งก็ใกล้เคียงกับที่เราหาไว้ตอนแรก
+
+	โดยที่เราสามารถพล็อต decision boundary ของ explainer ได้ดังรูปด้านล่าง 
+	> วิธีพล็อต decision boundary ก็แค่แก้สมการ $y = x_1(-1.586) + x_2(-1.623) +  0.423$ โดยการหาคู่อันดับ $(x_1,x_2)$ ทีทำให้ค่า $y=0.5$ 
+
+	 <div style="text-align:center;"><img src="/assets/img/lime/toy-problem-dec-bound-001.png" /></div>
+
+
+<!-- แต่ในวิธีของ LIME นั้นยังมีประเด็นนึงค่าการตั้งค่า kernel_width ในขั้นตอนที่ 2 (ซึ่งก็คือตัวแปร $\sigma$ ในสมการที่ \eqref{eq:pi}) เราจะต้องตั้งให้ไม่กว้างหรือแคบเกินไป 
+
+- ตัวอย่าง ถ้าตั้ง kernel width กว้างเกินไป ($$\sigma = 0.5$$) จะเห็นได้ว่าเส้น decision boundary มันเปลี่ยนไป เพราะมันไปคำนวณมาจากข้อมูลที่กว้างเกินไป ๆ ทำให้แทนที่เราจะได้พฤติกรรมโมเดลแค่ ณ จุดนั้น เรากลายเป็นได้พฤติกรรมโมเดลแบบกว้าง ๆ มาแทน ซึ่งอาจจะทำให้ไม่สามารถให้ contribution ของฟีเจอร์ ณ จุดที่เราสนใจได้อย่างแม่นยำ 
+
+<div style="text-align:center;"><img src="/assets/img/lime/toy-problem-dec-bound-05.png" /></div> -->
+
+
+
+# ตัวอย่างขั้นตอนของ LIME สำหรับ Image Classification
+
+ที่จริงแล้ว LIME ยังสามารถใช้ได้กับข้อมูลหลากหลายประเภท ในบทความนี้เลยยกตัวอย่างการใช้ LIME กับ image ขึ้นมาด้วย
 
 <u><b>สิ่งที่ต้องมีก่อนเริ่มทำ</b></u> 
 - Dataset $$X$$
@@ -158,7 +280,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 		model = keras.applications.inception_v3.InceptionV3()
 		```
 
-- จุดข้อมูลที่เราสนใจ $$x \in X$$ (1 rows, 1 รูป, 1 ฯลฯ)
+- จุดข้อมูลที่เราสนใจ $$x \in X$$ 
 	- จะขอเลือกเป็นรูปที่เค้าใช้ในเปเปอร์เลยแล้วกัน 
 
 		```python
@@ -184,9 +306,35 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 		```
 
 
-- เลือกประเภทโมเดล $$g$$ สำหรับใช้เป็น explainer (ยังไม่เทรน)
-- ออกแบบฟังก์ชัน $$h$$ ที่เอาไว้แปลง representation ของฟีเจอร์ จาก input ฟีเจอร์ของ explainer ($$z'$$) ไปเป็น input ของ model หลัก ($$z$$) และฟังก์ชันสำหรับแปลงกลับ (ไม่จำเป็นก็ได้ สำหรับบางปัญหาที่ representation ของ input ของ model หลัก สามารถใช้ได้กับ explainer เลยก็ไม่ต้องแปลงก็ได้ เช่น ปัญหาใน toy problem (รูปแรก) ก็ไม่จำเป็นต้องมีฟังก์ชัน $$h$$)
-- ออกแบบฟังก์ชัน $$D$$ สำหรับคำนวณ distance ระหว่าง 2 datapoints
+- เลือกประเภทโมเดล $$g$$ สำหรับใช้เป็น explainer (ยังไม่เทรน) ซึ่งเราจะเลือกใช้เป็น linear regression
+- ออกแบบฟังก์ชัน $$D$$ สำหรับคำนวณ distance ระหว่าง 2 datapoints 
+	- ใช้ cosine distance ธรรมดา
+
+
+จะเห็นได้ว่าสิ่งที่เราต้องมีก็เหมือนกับใน Toy problem ด้านบน แต่ว่าเมื่อเราใช้ LIME ใน image classification นั้น สิ่งที่เราต้องมีเพิ่มเติมขึ้นมาคือ
+
+- ฟังก์ชัน $$h$$ ที่เอาไว้แปลง representation ของฟีเจอร์ จาก input ฟีเจอร์ของ explainer ($$z'$$) ไปเป็น input ของ model หลัก ($$z$$) และฟังก์ชันสำหรับแปลงกลับ 
+<!-- 
+(ไม่จำเป็นก็ได้ สำหรับบางปัญหาที่ representation ของ input ของ model หลัก สามารถใช้ได้กับ explainer เลยก็ไม่ต้องแปลงก็ได้ เช่น ปัญหาใน toy problem (รูปแรก) ก็ไม่จำเป็นต้องมีฟังก์ชัน $$h$$)
+ -->
+
+	ย้อนไปตอนสมการที่ $\eqref{eq:loss}$ ที่อาจจะมีคนสงสัยกันว่าทำไม input ของ $f$ เป็น $z$ ธรรมดา แต่ทำไม input ของ $g$ เป็น $z'$ 
+
+	เหตุผลก็เพราะว่าในบางกรณีเราต้อง simplify ตัวฟีเจอร์มันก่อนที่จะเอาไปเข้า explainer เราก็เลยแยก $z$ เป็น input ของโมเดลหลักของเรา ส่วน $z'$ เป็น simplified version ของ $z$ อีกที
+
+	การที่เราต้อง simplify มันก็เพราะว่า
+
+	- ต้องอย่าลืมว่า explainer มันเป็นโมเดลเบสิค ๆ น่ารัก ๆ แล้วเราจะเทรนมันด้วย input ที่มีเป็นล้านฟีเจอร์ เช่น รูป (มีเป็นล้าน pixel) เลย ก็คงลำบาก 
+	- อีกอย่างก็คือ จริง ๆ แล้ว user หรือเรา ๆ เนี่ย ก็คงไม่ได้อยากรู้ไปถึงขนาดว่าแต่ละ pixel มี contribution เท่าไหร่ต่อผลการ classify ของรูปที่กำหนดให้ เราก็คงกรุ๊ป ๆ มันเป็นพาร์ท ๆ ก่อน (เช่นกรุ๊ปเป็น super-pixel) แล้วค่อยหาว่าพาร์ทนี้มี contribution ต่อผลการทำนายรึเปล่า ซึ่งพอกรุ๊ปเป็นพาร์ท ๆ เราก็สามารถ represent มันได้ในอีกรูปแบบหนึ่ง
+
+	ซึ่งก็คือเราจะมีฟังก์ชันนึงที่เอาไว้แปลงค่า $$z'$$ ไปเป็น $$z$$ 
+
+	\begin{equation}
+	\label{eq:h}
+	   z = h(z')
+	\end{equation}
+
+	ซึ่ง function $$h(z')$$ นี้ก็จะเปลี่ยนไปตามแต่ประเภทข้อมูล โดยที่ใน image classification นั้น เราจะแบ่งภาพออกเป็นส่วน ๆ แล้ว แปลงจากรูปภาพไปเป็นเวคเตอร์ของ 1 และ 0 โดยที่สมาชิกแต่ละตัวของเวคเตอร์นั้นจะแทนการเปิดปิดภาพส่วนนั้น ๆ ซึ่งเดี๋ยวจะเห็นตัวอย่างในด้านล่าง
 
 <u><b>ขั้นตอน</b></u>
 
@@ -280,7 +428,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	<div style="text-align:center;"><img src="/assets/img/lime/acoustic_guitar.png" /></div>
 
 
-8. ที่นี้ถ้าเราย้อนไปดูจะพบกว่า โมเดลเราบอกว่ารูปนี้เป็นรูปของ golden retriever ด้วย เราก็ลองทำของ golden retriever บ้าง ด้วยการเปลี่ยน index ของ column ที่เราสนใจที่ข้อ 4 แล้วก็รันลงมาใหม่
+8. ที่นี้ถ้าเราย้อนไปดูจะพบว่า โมเดลเราบอกว่ารูปนี้เป็นรูปของ golden retriever ด้วย เราก็ลองทำของ golden retriever บ้าง ด้วยการเปลี่ยน index ของ column ที่เราสนใจที่ข้อ 4 แล้วก็รันลงมาใหม่
 		
 	```python
 	#### ข้อ 4
@@ -354,20 +502,18 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	<div style="text-align:center;"><img src="/assets/img/lime/golden-lib.png" /></div>
 
 
-พร้อมตัวอย่างการใช้งานกับทั้ง tabular data, text, image ซึ่งสามารถตาม <a href='https://github.com/marcotcr/lime/tree/ce2db6f20f47c3330beb107bb17fd25840ca4606/doc/notebooks'>link นี้</a> ไปได้เลย
+ซึ่งเค้าทำตัวอย่างการใช้งานกับทั้ง tabular data, text, image ซึ่งสามารถตาม <a href='https://github.com/marcotcr/lime/tree/ce2db6f20f47c3330beb107bb17fd25840ca4606/doc/notebooks'>link นี้</a> ไปได้เลย ซึ่งเค้าทำออกมาดูดีมากเลย
 
-
-
-
-
-
+ในบทความต่อไปน่าจะพูดถึง DeepLIFT และ SHAP ที่เป็นวิธีในการทำ local interpretation เหมือนกัน
 
 <h1 style="color: red;">Discliamer</h1>
-รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบช้อผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
+รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
 
 ## Reference:
 - <a href='https://arxiv.org/pdf/1602.04938.pdf'>“Why Should I Trust You?”, Explaining the Predictions of Any Classifier</a>
 - <a href='https://nbviewer.jupyter.org/url/arteagac.github.io/blog/lime_image.ipynb'>Interpretable Machine Learning with LIME for Image Classification</a>
+- <a href='https://nbviewer.jupyter.org/urls/arteagac.github.io/blog/lime.ipynb'>Interpretable Machine Learning with LIME</a>
+- <a href="https://www.youtube.com/watch?v=CY3t11vuuOM">Interpretable Machine Learning Using LIME Framework - Kasia Kulma (PhD), Data Scientist, Aviva</a>
 
 
 
