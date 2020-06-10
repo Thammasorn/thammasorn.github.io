@@ -266,7 +266,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 
 
-# ตัวอย่างขั้นตอนของ LIME สำหรับ Image Classification
+# ขั้นตอนของ LIME สำหรับ Image Classification
 
 ที่จริงแล้ว LIME ยังสามารถใช้ได้กับข้อมูลหลากหลายประเภท ในบทความนี้เลยยกตัวอย่างการใช้ LIME กับ image ขึ้นมาด้วย
 
