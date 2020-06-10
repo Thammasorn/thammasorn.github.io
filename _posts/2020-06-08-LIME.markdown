@@ -2,7 +2,7 @@
 layout: post
 title:  "ทำไมถึง predict แบบนี้กันนะ? (LIME)"
 date:   2020-06-03 18:00:00 +0700
-img_thumbnail: /assets/img/thumbnail/lime
+img_thumbnail: /assets/img/thumbnail/lime.png
 img_header: /assets/img/header/lime.jpg
 description: "บทความนี้จะพูดถึงการหาว่าแต่ละฟีเจอร์ส่งผลต่อผลการทำนายของแต่ละ instance อย่างไรบ้างด้วยการใช้ LIME"
 tags: ['machine learning', 'local interpretation']
@@ -73,6 +73,8 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 คือถ้าเราอยากรู้แค่การอธิบายบนจุดนั้น เราก็ไม่จำเป็นต้องไปนั่งไล่แกะ complex function ใน neural network ให้เวียนหัวกัน (ซึ่งจริง ๆ มันก็ไม่น่ามีใครทำนะ) แต่ว่าเราสามารถพุ่งเป้าในการวิเคราะห์ไปที่จุดนั้น และข้อมูลที่ใกล้เคียงจุดนั้น ๆ และสร้าง explainer มา classify ข้อมูลในละแวกนั้นก็พอ ซึ่งจะเห็นจากรูปด้านบนว่า explainer เราสร้าง boundary decsion ใหม่ที่เป็นเส้นตรงธรรมดาขึ้นมาเส้นนึง ในขณะที่จริง ๆ แล้ว boundary decision ของโมเดลเรามันยึกยือกว่านั้น (เส้นสีเขียว) ซึ่งเราไม่ได้แคร์ว่าเส้นยึกยือทั้งหมดนั้นจะเป็นยังไง เราแคร์แค่ ณ จุดที่เราสนใจ มันเป็นยังไง
 
+> เพราะฉะนั้นแล้ว เวลาเราดูผลจาก LIME <span style='color: red;'>เราต้องพึงระลึกเสมอว่า พวก contribution ของฟีเจอร์ที่เราเห็นนั้น มันเป็นแค่ local หรือของข้อมูลในแถบนั้น <u>ไม่ใช่ของทั้ง dataset</u> </span>
+
 โดยที่ในการเทรน Explainer นั้น (อย่าลืมว่า explainer ก็เป็น machine learning model เหมือนกัน และเราก็ต้องเทรนเหมือนกัน) เราจะ weight ข้อมูลแต่ละจุดด้วยค่าความเหมือนกัน (proximity) ของ sample นั้น ๆ กับข้อมูลจุดที่เราสนใจ อย่างเช่นรูปด้านบนนั้น ขนาดของ <span style="color: red;">+</span> และ <span style="color: blue;">o</span> บ่งบอกถึง weight ของข้อมูลนั้น ๆ ในการเทรน explainer จะเห็นได้ว่าจุดที่อยู่ใกล้จะมีขนาดใหญ่ กว่าจุดที่อยู่ไกล ซึ่งหมายความว่ายิ่ง sample มีความใกล้เคียงกับข้อมูลที่เราสนใจมากเท่าไหร่ เรายิ่งให้ความสำคัญมันมากเท่านั้น
 
 <span style="color:red;">*** ส่วนด้านล่างนี้ ถ้าอยากข้าม ก็ข้ามไปเลยก็ได้ อ่านอีกที section ขั้นตอนของ LIME เลย</span>
@@ -142,7 +144,9 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 # ขั้นตอนของ LIME
 
-ขั้นตอนของการทำ LIME นั้น สามารถสรุปออกมาเป็นข้อ ๆ ดังนี้ ซึ่งในที่นี้จะขอยกตัวอย่างเป็น image classification แล้วกันนะครับ
+ขั้นตอนของการทำ LIME นั้น สามารถสรุปออกมาเป็นข้อ ๆ ดังนี้ ซึ่งในที่นี้จะขอยกตัวอย่างเป็น image classification แล้วกันนะครับ 
+
+> สำหรับโค้ดทั้งหมด สามารถดูได้ที่ <a href='https://colab.research.google.com/drive/1TL3YlU86UgWbTbR3vjg9de4yd65k9Wm5?usp=sharing'>link นี้ </a> ครับ
 
 <u><b>สิ่งที่ต้องมีก่อนเริ่มทำ</b></u> 
 - Dataset $$X$$
@@ -302,6 +306,57 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	```
 
 	<div style="text-align:center;"><img src="/assets/img/lime/golden-3.png" /></div>
+
+
+
+จากขั้นตอนทั้งหมดข้างบนนั้น จริง ๆ แล้วคนเขียนเปเปอร์ LIME นี้เค้า implement มาเป็น library ให้หมดแล้ว ซึ่งเราจะเหลือโค้ดแค่ไม่กี่บรรทัดเท่านั้น
+1. อ่านรูปกับ model มาก่อน
+	
+	```python
+	## อ่านรูป
+	import skimage.io 
+	x = skimage.io.imread("dog-guitar.jpg")
+	x = skimage.transform.resize(x, (299,299)) 
+	## อ่านโมเดล
+	import keras
+	model = keras.applications.inception_v3.InceptionV3()
+	```
+
+2. เอารูปกับ model ไปสร้าง explainer ได้เลย
+	```python
+	from lime import lime_image
+	explainer = lime_image.LimeImageExplainer()
+	explanation = explainer.explain_instance(x, model.predict, top_labels=5, hide_color=0, num_samples=1000)
+	```
+
+3. พล็อตออกมาดู
+	- segment ที่สำคัญของ acoustic guitar
+	```python
+	from skimage.segmentation import mark_boundaries
+	import matplotlib.pyplot as plt
+	# 402 เป็น index ของ acoustic guitar
+	temp, mask = explanation.get_image_and_mask(402, positive_only=True, num_features=5, hide_rest=True)
+	plt.imshow(mark_boundaries(temp, mask))
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/guitar-lib.png" /></div>
+
+	- segment ที่สำคัญของ golden retriever
+	```python
+	# 207 เป็น index ของ golden retriever
+	temp, mask = explanation.get_image_and_mask(207, positive_only=True, num_features=5, hide_rest=True)
+	plt.imshow(mark_boundaries(temp, mask))
+	```
+
+	<div style="text-align:center;"><img src="/assets/img/lime/golden-lib.png" /></div>
+
+
+พร้อมตัวอย่างการใช้งานกับทั้ง tabular data, text, image ซึ่งสามารถตาม <a href='https://github.com/marcotcr/lime/tree/ce2db6f20f47c3330beb107bb17fd25840ca4606/doc/notebooks'>link นี้</a> ไปได้เลย
+
+
+
+
+
 
 
 <h1 style="color: red;">Discliamer</h1>
