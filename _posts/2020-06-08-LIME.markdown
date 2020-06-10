@@ -501,8 +501,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 	<div style="text-align:center;"><img src="/assets/img/lime/golden-lib.png" /></div>
 
-
-ซึ่งเค้าทำตัวอย่างการใช้งานกับทั้ง tabular data, text, image ซึ่งสามารถตาม <a href='https://github.com/marcotcr/lime/tree/ce2db6f20f47c3330beb107bb17fd25840ca4606/doc/notebooks'>link นี้</a> ไปได้เลย ซึ่งเค้าทำออกมาดูดีมากเลย
+หวังว่าในบทความนี้พอจะทำให้เห็นภาพว่าจริง ๆ แล้ว concept และขั้นตอนของ LIME มันเป็นอย่างไร จะได้เอาไปใช้ประโยชน์ได้ถูก สำหรับผู้อ่านที่คิดจะใช้ LIME จริง ๆ ก็อย่าเมื้อตุ้มเขียนโค้ดเองแบบที่เราทำกันในบทความนี้ ทางผู้เขียนเปเปอร์เค้าทำ lib ไว้ให้เราใช้อย่างง่ายดายพร้อมกับตัวอย่างการใช้งาน LIME กับข้อมูลหลากหลายประเภท เช่น tabular data, text, image ซึ่งสามารถตาม <a href='https://github.com/marcotcr/lime/tree/ce2db6f20f47c3330beb107bb17fd25840ca4606/doc/notebooks'>link นี้</a> ไปได้เลย ซึ่งเค้าทำออกมาดูดีมากเลยแหละ ไปดูเถอะ
 
 ในบทความต่อไปน่าจะพูดถึง DeepLIFT และ SHAP ที่เป็นวิธีในการทำ local interpretation เหมือนกัน
 
