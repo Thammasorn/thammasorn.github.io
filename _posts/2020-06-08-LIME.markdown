@@ -235,7 +235,6 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	- แล้วก็ print ตัว coefficient ของ $x_1$ และ $x_2$ ออกมาดู
 		```python
 		print ('Coefficient: ', explainer.coef_)
-		print ('Intercept: ', explainer.intercept_)
 		# Result
 		Coefficient:  [-1.81405856 -0.76955154]
 		```
