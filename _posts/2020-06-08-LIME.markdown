@@ -224,7 +224,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	f_z = f.predict_proba(Z)[:,1]
 	```
 
-4. สร้าง explainer ด้วยการเทรน Linear regression ด้วยข้อมูลใน dataset $Z$ และ label ใน $f(z)$ ที่หามาในข้อก่อนหน้า แล้วอย่าลืมตั้ง sample weight เป็น $\pi$ ด้วย 
+4. สร้าง explainer ด้วยการเทรน Linear regression ด้วยข้อมูล dataset $Z$ และ label $f(z)$ ที่หามาในข้อก่อนหน้า แล้วอย่าลืมตั้ง sample weight เป็น $\pi$ ด้วย 
 
 	```python
 	from sklearn.linear_model import LinearRegression
