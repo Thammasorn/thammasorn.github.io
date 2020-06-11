@@ -253,7 +253,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	เมื่่อรวม contribution ของทั้ง 2 ฟีเจอร์ เราจะได้ probability ในการเป็น class 1 ของจุด $x$ ที่ประมาณโดย explainer ได้เท่ากับ $0.4535 - 0.192 = 0.2615$ ซึ่งก็ใกล้เคียงกับที่เราหาไว้ตอนแรก
 
 	โดยที่เราสามารถพล็อต decision boundary ของ explainer ได้ดังรูปด้านล่าง 
-	> วิธีพล็อต decision boundary ก็แค่แก้สมการ $y = x_1(-1.586) + x_2(-1.623) +  0.423$ โดยการหาคู่อันดับ $(x_1,x_2)$ ทีทำให้ค่า $y=0.5$ 
+	> วิธีพล็อต decision boundary ก็แค่แก้สมการ $y = x_1(-1.814) + x_2(-0.7695) โดยการหาคู่อันดับ $(x_1,x_2)$ ทีทำให้ค่า $y=0.5$ 
 
 	 <div style="text-align:center;"><img src="/assets/img/lime/toy-problem-dec-bound-001.png" /></div>
 
