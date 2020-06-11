@@ -382,6 +382,8 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	Z.shape
 	```
 
+	ในภาพด้านล่างจะเห็นว่าใน dataset $Z$ นั้นจะเป็นภาพที่ขาด ๆ หาย ๆ ไปบางส่วน โดยที่แต่ละภาพก็จะขาดไปไม่เท่ากัน
+
 	<div style="text-align:center;"><img src="/assets/img/lime/step-3.png" /></div>
 
 4. นำ dataset $$Z$$ ไปเข้าโมเดล $$f$$ และหา probability ของ acoustic guitar ของแต่ละ fake datapoint ออกมา หรือก็คือจะได้ $$f(z)$$
@@ -459,6 +461,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 	<div style="text-align:center;"><img src="/assets/img/lime/golden-3.png" /></div>
 
 
+ในการทำ LIME กับ image classification นั้น ถ้าสรุปเพื่อให้เข้าใจง่ายแล้วก็คือเราลองปิดภาพบางส่วนไป แล้วเอาไปให้โมเดลเราทำนาย แล้วดู probability ของการเป็น guitar ถ้าปิดส่วนนั้นไปแล้ว probability ของการเป็น guitar มันต่ำ ก็แปลว่าภาพส่วนนั้นเป็นภาพที่โมเดลเรามันมองว่าเป็น guitar น่ะแหละ พอปิดไปมันเลยมองไม่เห็น
 
 จากขั้นตอนทั้งหมดข้างบนนั้น จริง ๆ แล้วคนเขียนเปเปอร์ LIME นี้เค้า implement มาเป็น library ให้หมดแล้ว ซึ่งเราจะเหลือโค้ดแค่ไม่กี่บรรทัดเท่านั้น
 1. อ่านรูปกับ model มาก่อน
