@@ -140,7 +140,7 @@ Image Ref: <a href="https://arxiv.org/pdf/1602.04938.pdf">“Why Should I Trust 
 
 	 ที่จริงแล้วตัว input ของ explainer $$z'$$ อาจจะอยู่ในรูปแบบที่แตกต่างจากตัว input ของโมเดลหลัก $$z$$ เราก็ได้ เพื่อให้เห็นภาพชัดเจนมากขึ้นจะอธิบายเพิ่มเติมใน section การใช้ LIME กับ Image ด้านล่าง
 
-โดยที่วิธี minimize เทอม $$\mathcal{L}(f,g,\pi_x)$$ นี้ ก็คือการที่เราจะ train ต้ว explainer model ให้ทำนายผลการทำนายของโมเดลหลักเรา หรือก็คือ $f(z)$ ด้วยข้อมูล $z$ โดยตอนเทรนนั้น เราจะตั้ง sample weight ของ $z$ แต่ละตัวด้วยค่า $\pi_x(z)$ นั่นเอง 
+โดยที่วิธี minimize เทอม $$\mathcal{L}(f,g,\pi_x)$$ นี้ ก็คือการที่เราจะ train ตัว explainer model ให้ทำนายผลการทำนายของโมเดลหลักเรา หรือก็คือ $f(z)$ ด้วยข้อมูล $z$ โดยตอนเทรนนั้น เราจะตั้ง sample weight ของ $z$ แต่ละตัวด้วยค่า $\pi_x(z)$ นั่นเอง 
 
 นอกจากนี้ จากสมการที่ \eqref{eq:objective} ถ้าเราคิดดี ๆ จะพบว่าเทอม $$\mathcal{L}(f,g,\pi_x)$$ กับ $$\Omega(g)$$ มักจะกลับกัน หรือก็คือถ้า $$\mathcal{L}(f,g,\pi_x)$$ มีค่ามาก อาจจะเป็นเพราะว่า ตัว explainer $$g$$ นั้น มี learning performance ต่ำ ไม่สามารถบิดไปตาม complex function ของตัวโมเดลหลัก $$f$$ ได้ แต่ถ้าเราเพิ่ม learning performance มันก็คือการเพิ่ม complexity หรือเทอม $$\Omega(g)$$ ไปด้วย
 
