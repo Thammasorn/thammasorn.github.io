@@ -18,10 +18,11 @@ tags: ['deep learning', 'self-supervised learning']
 
 ซึ่งจากปัญหาว่าถ้าเราขี้เกียจ label รูปทั้งหมดก่อนมาเทรนโมเดล เราจะจัดกลุ่มรูปยังไง? ก็เลยมีนักวิจัยเค้าพยายามจะใช้ deep learning ในการ extract ฟีเจอร์ออกจากรูปก่อน แล้วค่อยเอาฟีเจอร์พวกนั้นไปทำ clustering อีกที ซึ่งมันก็จะแบ่งเป็นสองวิธีหลัก ๆ ด้วยกันก็คือ
 
-1. วิธีที่ apply มาจาก autoencoder ซึ่งก็คือทำ autoencoder กับรูป แล้วเอาตัว encode vector มาทำ clustering เลย ซึ่งมันเหนื่อย ไปหน่อย เพราะการทำ autoencoder กับรูปนี่จริง ๆ มันก็ซับซ้อนอยู่
+1. วิธีที่ apply มาจาก autoencoder ซึ่งก็คือทำ autoencoder กับรูป แล้วเอาตัว encode vector มาทำ clustering 
 
-2. วิธีที่มาจาก representation learning หรือ contrastive learning
+2. วิธีที่มาจาก representation learning ก็คือ
 
+3. วิธีแบบ contrastive learning ซึ่งเป็นวิธีหา representation ของรูปอีกรูปแบบหนึ่ง ซึ่งตัว objective function มันจะเป็นการพยายามขยับรูปที่เหมือนกันให้เข้ามาใกล้กัน และขยับรูปที่ไม่เหมือนกันให้ห่างกัน  (คำว่าขยับหมายถึงขยับค่า representation vector ให้เข้ามาใกล้ ๆ กัน) (เอาไว้จะเขียนให้ละเอียด ๆ ในบทความต่อไปเด้อ)
 
 
 ## Deep Clustering
@@ -34,7 +35,7 @@ tags: ['deep learning', 'self-supervised learning']
    \min_{\theta,W} \frac{1}{N} \sum_{n=1}^{N} \ell (g_{W}(f_{\theta}(x_n)),y_n)
 \end{equation}
 
-ซึ่ง 
+โดยที่
 - $$x_n$$ คือรูปหรือข้อมูลนำเข้า 
 - $$f_{\theta}$$ คือ neural network ชุดแรกที่เราเรียกว่า feature generator ซึ่งมีไว้ extract ฟีเจอร์จากรูป ซึ่งฟีเจอร์จากรูปนั้นจะเป็น vector ขนาดตามที่เรากำหนดไว้ หรือเราจะเรียก vector พวกนั้นว่า latent vector
 - $$g_W$$ คือ neural network ที่เราเรียกว่า top layer จะต่อออกไปจาก feature generator และจะให้ output เป็นเลข pseudo label  ซึ่งถ้าดูตามสมการข้างบนจะเห็นว่า
