@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "จัดกลุ่มภาพโดยไม่มี label ด้วย Deep Clustering"
-date:   2020-06-03 18:00:00 +0700
+date:   2020-06-21 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/deep-cluster.png
 img_header: /assets/img/header/deep-cluster.jpg
 description: "บทความนี้สรุปมาจากเปเปอร์ 'Deep Clustering for Unsupervised Learning of Visual Features' ซึ่งนำเสนอวิธีในการ classify image โดยที่เราไม่ต้องใช้ labels"
