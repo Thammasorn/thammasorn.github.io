@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Deep Clustering"
+title:  "จัดกลุ่มภาพโดยไม่มี label ด้วย Deep Clustering"
 date:   2020-06-03 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/deep-cluster.png
 img_header: /assets/img/header/deep-cluster.jpg
@@ -284,7 +284,7 @@ tags: ['deep learning', 'self-supervised learning']
 
 <!-- นอกจากนี้ -->
  
-<u>Trivial Parameterization</u><br>
+<u>Trivial Parametrization</u><br>
 
 <span style="color: red;">ปัญหา:</span>เป็นปัญหาที่เกิดจากเกิด cluster นึงที่ใหญ่มากกว่า cluster กลุ่มอื่นขึ้นมา ซึ่งที่จริงอาจจะเกิดจากจำนวนรูปแต่ละประเภทมีไม่เท่ากันก็ได้ ถ้าเกิดแบบนี้ขึ้นมา neural network เราก็จะ classify ได้ไม่ดี (ที่จริงมันก็คือปัญหา imbalance class ธรรมดานั่นแหละ)
 
