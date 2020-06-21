@@ -67,7 +67,7 @@ tags: ['deep learning', 'self-supervised learning']
 - $$x_n$$ คือรูปหรือข้อมูลนำเข้า 
 - $$f_{\theta}$$ คือ neural network ชุดแรกที่เราเรียกว่า feature generator ซึ่งมีไว้ extract ฟีเจอร์จากรูป ซึ่งฟีเจอร์จากรูปนั้นจะเป็น vector ขนาดตามที่เรากำหนดไว้ หรือเราจะเรียก vector พวกนั้นว่า latent vector
 - $$g_W$$ คือ neural network ที่เราเรียกว่า top layer จะต่อออกไปจาก feature generator และจะให้ output เป็นเลข pseudo label  ซึ่งถ้าดูตามสมการข้างบนจะเห็นว่า
-	- $g_W$ เป็นฟังก์ชันของ $f_{\theta}$ 
+	- $g_W$ เป็นฟังก์ชันของ $f_{\theta}$ ซึ่งก็คือมันรับ output ของ $f_{\theta}$ มาเป็น input ของตัวมัน
 	- และเรานำ $g_W(f_{\theta})$ ไปเทียบกับ $y$ ซึ่งก็คือ pseudo label เพื่อคำนวณ loss
 - $$y$$ คือ pseudo label ที่เกิดจากการนำ output จาก $$f_{\theta}$$ ไปเข้า Kmeans clustering แล้วเอาเลข cluster มาเป็น pseudo label
 - $$\ell$$ คือ cross entropy loss
@@ -278,15 +278,17 @@ tags: ['deep learning', 'self-supervised learning']
 
 <span style="color: green;">วิธีแก้:</span>ในเปเปอร์นี้แก้กันง่าย ๆ เลยก็คือ ถ้ามันมี cluster ที่ไม่มีข้อมูลอยู่เลย เราจะเอา centroid ของ cluster ที่มีข้อมูลมาเปลี่ยน ๆ นิดนึง (random +- นิดหน่อย) แล้วแบ่ง cluster นั้นออกเป็น 2 clusters ทำไปเรื่อย ๆ จนกว่าจะมีจำนวน cluster ที่มีข้อมูลเท่ากับจำนวน cluster ที่เราตั้งไว้ แล้วค่อยเอาไปทำ pseudo-label แล้วไปเทรนต่อ หรือก็คือเราบังคับมันให้ทำการแบ่งกลุ่มอยู่ตลอดเวลา และหวังว่าเมื่อเทรนไปเรื่อย ๆ กลุ่มพวกนั้นจะเป็นกลุ่มที่เราต้องการให้แบ่ง
 
+<!-- นอกจากนี้เค้ายังป้องกันปัญหา imbalance ของ cluster ด้วยการหยิบ uniform sample ข้อมูลจากแต่ละ cluster มาเทรนใน
+ -->
 <!-- นอกจากนี้เพื่อป้องกันปัญหาแต่เนิ่น ๆ ในตอน sample -->
 
 <!-- นอกจากนี้ -->
  
-<!-- <u>Trivial Parameterization</u><br>
+<u>Trivial Parameterization</u><br>
 
-<span style="color: red;">ปัญหา:</span>เป็นปัญหาที่เกิดจากเกิด cluster นึงที่ใหญ่มากขึ้นมา
+<span style="color: red;">ปัญหา:</span>เป็นปัญหาที่เกิดจากเกิด cluster นึงที่ใหญ่มากกว่า cluster กลุ่มอื่นขึ้นมา ซึ่งที่จริงอาจจะเกิดจากจำนวนรูปแต่ละประเภทมีไม่เท่ากันก็ได้ ถ้าเกิดแบบนี้ขึ้นมา neural network เราก็จะ classify ได้ไม่ดี (ที่จริงมันก็คือปัญหา imbalance class ธรรมดานั่นแหละ)
 
-<span style="color: green;">วิธีแก้:</span>ซึ่งในเปเปอร์นี้เค้าแก้ด้วยการ sample ข้อมูลจากแต่ละ cluster ให้เท่า ๆ กันก่อนเอามาเทรน -->
+<span style="color: green;">วิธีแก้:</span>ซึ่งในเปเปอร์นี้เค้าแก้ด้วยการ sample ข้อมูลจากแต่ละ cluster ให้เท่า ๆ กันก่อนเอามาเทรน (เท่าที่เข้าใจมันก็คือ downsampling)
 
 <u>Trivial Feature</u><br>
 
