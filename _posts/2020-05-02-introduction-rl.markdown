@@ -5,7 +5,7 @@ date:   2020-05-02 22:15:02 +0700
 img_thumbnail: /assets/img/thumbnail/rl.png
 img_header: /assets/img/header/intro-RL.jpg
 description: "บทความนี้เป็นการทำความรู้จักกับ Reinforcement Learning ว่าคืออะไร ต่างจาก Supervised- หรือ Unsupervised-learning ยังไง และเราจะใช้ Reinforcement Learning ในการแก้ปัญหาอย่างไรได้บ้าง"
-tags: ['reinforcement learning','deep learning']
+tags: ['reinforcement learning']
 ---
 นอกจาก Supervised-learning และ Unsupervised-learning ที่ใช้ในการทำนายหรือการจัดกลุ่ม ใน Machine learning นั้นยังมีอีกประเภทหนึ่งของ algorithm ที่ชื่อว่า reinforcement learning ซึ่งเราจะไปทำความรู้จักมันโดยคร่าวว่าในบทความนี้กันครับ
 

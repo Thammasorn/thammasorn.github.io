@@ -1,30 +1,20 @@
 ---
 layout: post
-title:  "ทำไมถึง predict แบบนี้นะ? (SHAP value)"
-date:   2020-06-03 18:00:00 +0700
-img_thumbnail: /assets/img/thumbnail/shap
-img_header: /assets/img/header/shap
-description: "บทความนี้จะพูดถึงการหาว่าแต่ละฟีเจอร์ใดส่งผลต่อผลการทำนายอย่างไรบ้างด้วยการใช้ SHAP โดยที่"
-tags: ['machine learning', 'local interpretation']
+title:  "สร้าง image classification model ด้วย label data อันน้อยนิด (FixMatch)"
+date:   2020-06-23 18:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/fixmatch.png
+img_header: /assets/img/header/fixmatch
+description: "บทความนี้จะพูดถึงการเทรน image classification โมเดลในกรณีที่เรามีข้อมูลรูปอยู่เยอะ แต่ว่ามี label data จำนวนน้อยนิด"
+tags: ['deep learning', 'semi-supervised learning']
 ---
 
-!!! กรุณาอ่าน <a href="https://thammasorn.github.io/2020/05/03/Q-learning.html" style="color: red;">Q learning</a> ก่อน
-
 #### List of Variable and Function
-- $$s_t$$ = state ณ เวลา $$t$$
-- $$a_t$$ = action ณ เวลา $$t$$
-- $$r_t$$ = reward ที่ได้จากการทำ $$a_t$$ ใน $$s_t$$
-- $$\gamma$$ = reward discount factor เอาไว้ควบคุมความสำคัญของ reward ในอนาคต
-- $$a^\ast$$ = optimal action
-- $$\mathcal{D}$$ = experience replay memory
-- $$\pi$$ = Policy function เป็นฟังก์ชันที่จับคู่ระหว่าง state กับ optimal action หรือ $$a^{\ast}_t = \pi(s_t)$$
-- $$\theta$$ = neural network
-- $$Q(s,a;\theta)$$ = Q(s,a) ที่ประมาณด้วยการใช้ neural network $$\theta$$
-- $$\pi(s;\theta)$$ = policy function ที่ตัดสินใจจากการพิจารณาค่า $$Q(s,a; \theta)$$
-- $$\alpha$$ = learning rate
-- $$\mathbb{E} [y \vert x=x_1]$$ คือค่าประมาณของ $$y$$ เมื่อค่าของ $$x$$ เท่ากับ $$x_1$$
-- $$max_x f(x)$$ คือการหาค่า $$f(x)$$ ที่มากที่สุดโดยการปรับค่า $$x$$ 
-- $$argmax_x f(x)$$ คือการหาค่า $$x$$ ที่ทำให้ได้ $$f(x)$$ มากที่สุด
+- $\mathcal{X} =$ $$\{$$ $(x_b,p_b): b \subset (1,....,B))$ $$\}$$
+	- $\mathcal{X}$ คือ batch ขนาด $B$ ของคู่อันดับ $(x_b,p_b)$ 
+		- $x_b$ คือ labeled image
+		- $p_b$ คือ one-hot labels
+- $\mathcal{U} =$ $$\{$$ $(u_b): b \subset (1,....,\mu B))$ $$\}$$
+	- $\mathcal{U}$ คือ batch $B$ ของ unlabeled image $u_b$ ขนาด $\mu B$ เมื่อ $\mu$ เอาไว้กำหนดอัตราส่วนของรูปที่จะนำ
 
 <!-- # Markov Decision Process (MDP)
 Markov Decision Process เป็นระบบแบบหนึ่งที่ต่อยอดมาจาก Markov Chain โดยที่มีการเพิ่ม action กับ reward เข้าไปให้

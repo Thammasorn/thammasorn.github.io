@@ -5,7 +5,7 @@ date:   2020-05-28 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/ice.png
 img_header: /assets/img/header/ice.jpg
 description: "บทความนี้จะพูดถึง ICE plot ซึ่งเป็นวิธีหนึ่งในการหาความสัมพันธ์ระหว่างฟีเจอร์กับผลการทำนาย ซึ่งต่อยอดมาจาก PDP plot เพื่อให้เราสามารถเห็น heterogeneous effect ได้"
-tags: ['machine learning','data science','model interpretation']
+tags: ['machine learning','model interpretation']
 ---
 
 <span class="font-weight-bold" style="color: red;">!!! กรุณาอ่าน <a href="https://thammasorn.github.io/2020/05/03/PDP.html" style="color: red;">PDP plot</a> ก่อน</span>

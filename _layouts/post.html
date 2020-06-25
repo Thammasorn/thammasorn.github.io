@@ -58,9 +58,10 @@
 		  <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Mitr:wght@500&family=Sarabun:wght@200&family=Taviraj:wght@200&display=swap" rel="stylesheet">
 		  <link href="/assets/css/clean-blog.min.css" rel="stylesheet">
 
-		  <script type="text/javascript">
+		 <!--  <script type="text/javascript">
 		    var tag_color = {'reinforcement learning': '#ff5200','deep learning':'#6f0000','machine learning':'#00263b','data science':'#00a1ab','model interpretation':'#708160'};
-		  </script>
+		  </script> -->
+		  <script src="./assets/js/tag_color.js"></script>
 
 		  <script type="text/javascript">
 		    var tag_color = {'reinforcement learning': '#ff5200','deep learning':'#6f0000','machine learning':'#00263b','data science':'#00a1ab','model interpretation':'#708160','self-supervised learning':'#e19999','local interpretation':'#6886c5'};
@@ -103,7 +104,7 @@
             <h2 class="subheading" style="font-family: 'Mitr', sans-serif;">{{page.sub_title}}</h2>
             <span>
 			{% for tag in page.tags%}
-				<a href="#" class="badge badge-primary" style="font-family: 'Mitr', sans-serif;" id="{{tag}}">{{tag}}</a>
+				<a href='/tags/{{tag}}.html' class="badge badge-primary" style="font-family: 'Mitr', sans-serif;" id="{{tag}}">{{tag}}</a>
 				<script type="text/javascript">document.getElementById("{{tag}}").style.backgroundColor = tag_color['{{tag}}'];</script>
 			{% endfor %}
 			</span>

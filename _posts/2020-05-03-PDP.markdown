@@ -6,7 +6,7 @@ img_thumbnail: /assets/img/thumbnail/pdp.png
 img_header: /assets/img/header/pdp.jpg
 description: "บทความนี้จะทำความรู้จักกับ Partial Depence Plot (PDP) ซึ่งเป็นวิธีในการหาความสัมพันธ์ระหว่างข้อมูลฟีเจอร์กับผลลัพธ์การทำนายไม่ว่าจะเป็น Classification หรือ Regression"
 sub_title: "หาว่าฟีเจอร์ไหนส่งผลต่อโมเดลอย่างไร"
-tags: ['machine learning','data science','model interpretation']
+tags: ['machine learning','model interpretation']
 ---
 
 ตามปกติแล้ว เมื่อเราสร้าง model สำหรับ classification มาแล้ว เช่น ทำนายว่าลูกค้าคนใดจะมาชำระเงินล่าช้า, ทำนายว่าลูกค้าจะตอบรับการแนะนำโปรโมชั่นใหม่ๆรึเปล่า ฯลฯ เราอาจจะอยากศึกษาเพิ่มเติมว่าฟีเจอร์ไหน หรือปัจจัยใดบ้างที่มีผลต่อ model ของเรา แล้วถ้ามันส่งผลต่อโมเดลของเราแล้วมันส่งผลไปในทิศทางไหน ส่งผลอย่างไร
