@@ -1,8 +1,8 @@
 ---
 layout: post
 title:  "เปิดประตูสู่ Reinforcement Learning ด้วย Multi-Armed Bandit"
-date:   2020-05-03 18:00:00 +0700
-img_thumbnail: /assets/img/thumbnail/fixmatch.png
+date:   2020-05-03 16:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/multi-armed-bandit.jpg
 img_header: /assets/img/header/multi-armed-bandit.jpg
 description: "บทความนี้จะพูดถึงการฝึกคอมพิวเตอร์ให้แก้ปัญหา Multi-Armed Bandit ซึ่งเปรียบเสมือง Hello World ของ reinforcement learning ก็ว่าได้"
 tags: ['reinforcement learning']
