@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "สร้าง image classification model ด้วย label data อันน้อยนิด (FixMatch)"
-date:   2020-06-23 18:00:00 +0700
+date:   2020-06-25 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/fixmatch.png
 img_header: /assets/img/header/fixmatch
 description: "บทความนี้จะพูดถึงการเทรน image classification โมเดลในกรณีที่เรามีข้อมูลรูปอยู่เยอะ แต่ว่ามี label data จำนวนน้อยนิด"
