@@ -13,7 +13,7 @@ tags: ['reinforcement learning']
 !!! กรุณาอ่าน <a href="https://thammasorn.github.io/2020/05/03/Q-learning.html" style="color: red;">Q learning</a> ก่อน
 
 # Introduction
-ในบทความนี้จะ introduce ตัว double Q learning ที่ maximisation bias ของ Q-learning  ซึ่งที่จริงก็เป็นวิธีที่ถูกนำเสนอในเปเปอร์ <a href="https://papers.nips.cc/paper/3964-double-q-learning">Double Q-learning (Hado V. Hasselt 2010)</a> ซึ่งก็ถือว่าออกมานานแล้ว  แต่ก็ถูกเอาไปประยุกต์ใช้กับวิธีใหม่ ๆ (รึเปล่าหว่า) ในหลายวิธีเช่น  Rainbow Reinforcement learning (State-Of-The-Art ของ DQN) หรือ DDPG เพราะฉะนั้นรู้จักมันไว้ก็ไม่เสียหาย
+ในบทความนี้จะ introduce ตัว double Q learning ที่แก้ปัญหา maximisation bias ของ Q-learning  ซึ่งที่จริงก็เป็นวิธีที่ถูกนำเสนอในเปเปอร์ <a href="https://papers.nips.cc/paper/3964-double-q-learning">Double Q-learning (Hado V. Hasselt 2010)</a> ซึ่งก็ถือว่าออกมานานแล้ว  แต่ก็ถูกเอาไปประยุกต์ใช้กับวิธีใหม่ ๆ (รึเปล่าหว่า) ในหลายวิธีเช่น  Rainbow Reinforcement learning (State-Of-The-Art ของ DQN) หรือ DDPG เพราะฉะนั้นรู้จักมันไว้ก็ไม่เสียหาย
 
 
 # ปัญหา Maximisation Bias
