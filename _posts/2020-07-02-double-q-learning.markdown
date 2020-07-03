@@ -131,7 +131,7 @@ tags: ['reinforcement learning']
 	   Q_1(s,a) \leftarrow Q_1(s,a) + \alpha (r + {\color{energy}Q_2(s,argmax(Q_1(s',a)))} - Q_1(s,a))
 	\end{equation}
 	- จะเห็นได้ว่าเมื่อเราจะอัพเดท $Q_1$ นั้น
-		- เราใช้ $Q_1$ ในการเลือก optimal action ของ next state ($argmax_a Q_a(s',a)$)
+		- เราใช้ $Q_1$ ในการเลือก optimal action ของ next state ($argmax_a Q_1(s',a)$)
 		- แต่เราใช้ ค่า $Q$ ของ state และ optimal action (ที่ $Q_1$ เลือกมา) จากตาราง $Q_2$ เหมือนเป็นการให้ $Q_2$ ช่วยยืนยันอีกทีว่า action ที่ $Q_1$ เลือกมา ดีจริง ๆ รึเปล่า ถ้าไม่ดีก็ปรับซะเลย เพราะค่าที่ $Q_2$ ให้มามันจะน้อย มันก็จะไปอัพเดทค่า $Q_1(s,a)$ นี้ให้น้อยลงไปด้วย
 
 
