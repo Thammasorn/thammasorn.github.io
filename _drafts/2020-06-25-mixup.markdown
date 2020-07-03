@@ -1,0 +1,29 @@
+---
+layout: post
+title:  "Data Augmentation แบบ Mixup"
+date:   2020-06-25 18:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/fixmatch.png
+img_header: /assets/img/header/fixmatch
+description: "บทความนี้จะพูดถึงการใช้เทคนิค mixup"
+tags: ['deep learning', 'semi-supervised learning']
+---
+
+> บทความนี้มาจากเปเปอร์ mixup: Beyond Empirical Risk Minimization 
+
+# 
+
+![alt text](/assets/img/DQN/overview.png)
+
+\begin{equation}
+\label{eq:loss_target_network}
+   E_{(s,a,r,s') \sim U(\mathcal{D})} [(r + \gamma max_{a} Q(s',a; \theta^-) - Q(s,a; \theta))^2]
+\end{equation}
+
+```python
+	current_Q = target_network.predict(np.stack(batch[:,0]))
+```
+<div style="text-align:center"><img src="/assets/img/DQN/ep500.gif" /></div>
+
+
+
+
