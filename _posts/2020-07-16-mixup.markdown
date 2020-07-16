@@ -4,7 +4,7 @@ title:  "Augment Data ด้วย Mixup"
 date:   2020-07-16 18:00:00 +0700
 img_thumbnail: /assets/img/thumbnail/mixup.png
 img_header: /assets/img/header/mixup.webp
-description: "Augment Data ที่ช่วยลดปัญหา overfit และเพิ่มการ regularization ให้กับโมเดล ด้วยวิธีง่าย ๆ แต่ใช้ได้จริง"
+description: "บทความนี้พูดถึงวิธีการ augment Data ที่ถูกนำเสนอในเปเปอร์ 'mixup: BEYOND EMPIRICAL RISK MINIMIZATION' ซึ่งจะช่วยให้โมเดลเราทำงานกับข้อมูลแบบ in-between sample (ข้อมูลที่อยู่กึ่งกลางระหว่างสองคลาส) ได้ดีขึ้น ช่วยลดปัญหา overfit ด้วยวิธีง่าย ๆ แต่ใช้ได้จริง"
 tags: ['deep learning','machine learning']
 ---
 
