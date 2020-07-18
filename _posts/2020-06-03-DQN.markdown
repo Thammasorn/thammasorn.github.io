@@ -250,6 +250,7 @@ Action มี 4 actions ด้วยกัน ได้แก่
 	    ## ในทุก ๆ ช่วง target_network_update_int ให้อัพเดท target network
 	    if t%target_network_update_int==0:
 	      target_network.set_weights(online_network.get_weights())
+	    t += 1
 	    ## ถ้าสิ้นสุด episode แล้วก็ให้ออกจาก loop นี้ ไปเริ่ม episode ถัดไป
 	    if done:
 	      break
