@@ -1,0 +1,44 @@
+---
+layout: post
+title:  "แปลงหน้าคนเป็น vector ด้วย FaceNet"
+date:   2020-07-18 18:00:00 +0700
+img_thumbnail: /assets/img/thumbnail/duel-dqn.png
+img_header: /assets/img/header/duel-dqn.png
+description: "บทความนี้จะพูดถึงวิธีการที่ชื่อว่า facenet ซึ่งเอาไว้หา representative vector ของใบหน้าคนด้วยการใช้ triplet loss ซึ่งเราสามารถนำ representative vector นั้นไปทำอะไรต่อได้หลายอย่าง เช่น เอาไปเทียบกันระหว่างสองหน้าแล้วดูว่าเหมือนกันรึเปล่า"
+tags: ['deep learning','computer vision']
+---
+> บทความนี้อธิบายวิธีจากเปเปอร์ <a href="https://arxiv.org/pdf/1503.03832.pdf"> FaceNet: A Unified Embedding for Face Recognition and Clustering </a> 
+
+# ภาพรวมของ FaceNet
+ใน facenet นั้น เค้านำเสนอวิธีการในการใช้ neural network เพื่อแปลงภาพหน้าคนไปเป็น vector นึงที่ represent ภาพนั้นได้ 
+> คำว่า represent ภาพนั้นได้คือ ถ้าเราใส่ภาพเดิม ๆ หรือคล้าย ๆ เดิมเข้าไป neural network ก็ควรจะให้ vector ที่หน้าตาคล้ายกัน แต่ถ้าใส่ภาพที่เป็นคนละหน้าเลยเข้าไป neural network ก็ควรจะให้ vector ที่แตกต่างกันออกมา
+
+
+
+ซึ่งที่จริงแล้ว ก่อนหน้านี้ก็มีการใช้ neural network ในการหา representation vector จากรูปอยู่แล้ว เช่น <a href="https://www.cs.toronto.edu/~ranzato/publications/taigman_cvpr14.pdf">DeepFace</a> ซึ่งใช้วิธีในการเทรน neural network ให้สามารถ classify ได้ว่ารูปนี้เป็นรูปของใคร แล้วค่อยตัดเอาผลจาก layer ท้าย ๆ (แต่ไม่ท้ายสุด) ออกมาเป็นใช้ representation vector
+
+
+![alt text](/assets/img/facenet/deepface.png) Ref:DeepFace: Closing the Gap to Human-Level Performance in Face Verification
+
+
+อย่างไรก็ตามวิธีพวกนั้น ตอนเราเทรน neural network ตัว objective หรือ loss function ที่ใช้ในการเทรนมันจะไม่ค่่อยตรงประเด็นซักเท่าไหร่นัก เช่น เรา
+
+
+ในเปเปอร์นี้เค้าก็เลยนำเสนอวิธีในการเทรน neural network ด้วย objective แบบตรงตามที่เราต้องการเลย ก็คือขยับ vector ของคนเดียวกันให้มาใกล้กัน และขยับ vector ของคนละคนให้ออกไปไกล ๆ กัน 
+
+
+# Triplet Loss
+
+
+
+# Triplet Selection
+
+
+
+
+## Reference:
+- <a href='https://arxiv.org/pdf/1312.5602.pdf'>Playing Atari with Deep Reinforcement Learning</a>
+- <a href='https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf'>Human-level control through deep reinforcement learning</a>
+
+
+
