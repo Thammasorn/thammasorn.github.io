@@ -186,7 +186,7 @@ def build_neural_network_dqn(n_action):
   return model
 
 ### Simple Dueling DQN
-def build_neural_network_dueling_dqn():
+def build_neural_network_dueling_dqn(n_action):
   input_layer = Input(shape=(8,)) #input shape เอามาจาก env.observation_space 
   dense = Dense(100, activation='relu', kernel_initializer='random_normal')(input_layer)
   V = Dense(50, activation='relu', kernel_initializer='random_normal')(dense)
@@ -230,6 +230,13 @@ def build_neural_network_dueling_dqn():
 ![alt text](/assets/img/duel-dqn/10action.png)
 
 จะเห็นได้ว่า dueling dqn นั้นจะมีประโยชน์มาก ๆ เมื่อเราอยู่ใน environment ที่มี action ที่คล้าย ๆ กัน ในบาง state (แต่ที่จริงแล้วในกรณีนี้คือทุก state เลย)
+
+
+
+<h1 style='color: red;'>Disclaimer</h1>
+รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
+
+
 
 
 ## Reference:
