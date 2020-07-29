@@ -93,45 +93,47 @@ tags: ['deep learning','computer vision']
 	  L(a,p,n) = d(a,p) - d(a,n) + \alpha
 	\end{equation}
 
+	ซึ่งจริง ๆ แล้วก็คือ เราต้องการให้ $d(a,n) - d(a,p) 	\geq \alpha$ นั่นเอง
 
 #### ตัวอย่างการใช้ triplet loss
-ในบทความนี้จะแสดงการเทรน neural network ด้วย triplet loss แบบง่าย ๆ ให้ดู เพื่อแสดงให้เห็นว่า triplet loss นั้นสามารถทำงานได้จริง ๆ และโค้ดโดยคร่าวนั้นจะเป็นอย่างไร ซึ่งข้อมูลที่ใช้นั้นจะขอใช้เป็นภาพ mnist แค่ triplet เดียว (3 ภาพ) แทน dataset หน้าคนแล้วกัน เพราะมันน่าจะเทรนด้วยได้ง่ายกว่า แล้วก็ใช้ embedding vector ที่มีขนาดแค่ 2 ก็น่าจะพอ ซึ่งจะง่ายต่อการ visualize ให้ดูกัน
+ในบทความนี้จะแสดงการเทรน neural network ด้วย triplet loss แบบง่าย ๆ ให้ดู เพื่อแสดงให้เห็นว่า triplet loss นั้นสามารถทำงานได้จริง ๆ และโค้ดโดยคร่าวนั้นจะเป็นอย่างไร ซึ่งข้อมูลที่ใช้นั้นจะขอใช้เป็นแค่ triplet เดียว (3 ภาพ) แทน dataset ใหญ่ ๆ แล้วกัน จะได้เทรนเร็ว ๆ แล้วก็ใช้ embedding vector ที่มีขนาดแค่ 2 ก็น่าจะพอ ซึ่งจะง่ายต่อการ visualize ให้ดูกัน
 
 > ใน Facenet จริง ๆ นั้นใช้พวก GoogleLeNet, Inception model โดยที่มีขนาด output หรือ embedding vector เป็น 128
 
-1. ก่อนอื่นก็ขอเลือก triplet ออกมาอันนึงก่อน (3 ภาพ) เป็นภาพเลข 1 สองภาพ และภาพเลข 7 หนึ่งภาพ
+1. ก่อนอื่นก็ขอเลือก triplet ออกมาอันนึงก่อน (3 ภาพ) ดังแสดงในรูปด้านล่าง
+
 	```python
-	train,test = tf.keras.datasets.mnist.load_data(path="mnist.npz")
-	anchor = train[0][train[1]==1][0]
-	positive = train[0][train[1]==1][1]
-	negative = train[0][train[1]==7][4]
+	import cv2
+	anchor = cv2.imread('ronaldo-2.jpeg')
+	positive = cv2.imread('ronaldo.jpg')
+	negative = cv2.imread('messi.jpg')
+
 	f, axes = plt.subplots(1,3, facecolor='white', figsize=(15,5))
 	axes[0].set_title('Anchor')
-	axes[0].imshow(anchor, cmap='gray')
+	axes[0].imshow(cv2.cvtColor(anchor, cv2.COLOR_BGR2RGB))
 	axes[1].set_title('Positive')
-	axes[1].imshow(positive, cmap='gray')
+	axes[1].imshow(cv2.cvtColor(positive, cv2.COLOR_BGR2RGB))
 	axes[2].set_title('Negative')
-	axes[2].imshow(negative, cmap='gray')
+	axes[2].imshow(cv2.cvtColor(negative, cv2.COLOR_BGR2RGB))
 	```
-
 
 	![alt text](/assets/img/facenet/mnist-step1.png)
 
-
 2. ต่อมาก็สร้างโมเดล เอาแบบง่าย ๆ เลย กับสร้าง optimizer เตรียมไว้
+
 	```python
-	input_layer = Input(shape=(784,))
-	dense = Dense(500, activation='relu')(input_layer)
-	dense = Dense(50, activation='relu')(dense)
-	dense = Dense(10, activation='relu')(dense)
+	input_layer = Input(shape=(317,317,3))
+	cnn = Conv2D(filters=20,kernel_size=(10,10),activation='relu')(input_layer)
+	pooling = MaxPooling2D((10,10))(cnn)
+	cnn = Conv2D(filters=20,kernel_size=(3,3),activation='relu')(pooling)
+	pooling = MaxPooling2D((2,2))(cnn)
+	flatten = Flatten()(pooling)
+	dense = Dense(100, activation='relu')(flatten)
 	output = Dense(2, activation='linear')(dense)
 	embedding = l2_normalize(output, axis=1)
 	model = Model(input_layer,embedding)
-
 	optimizer = Adam(learning_rate=0.000001)
 	```
-
-
 
 3. แล้วก็เทรนโมเดลด้วย Triplet loss ด้วย code ด้านล่าง
 
@@ -199,7 +201,6 @@ tags: ['deep learning','computer vision']
 	<!-- <img alt="Bootstrap Image Preview" src="/assets/img/facenet/process.gif" class="center" /> -->
 
 	ซึ่งจะเห็นได้ว่า เมื่อเทรนไปเรื่อย ๆ จุดสีเขียวจะขยับเข้าไปหาจุดสีน้ำเงิน ในขณะที่จุดสีแดงจะขยับออกห่างจุดสีน้ำเงินมากขึ้นเรื่อย ๆ หรือก็คือค่า embedding vector ของ anchor และ positive image นั้นจะมีค่าใกล้กันมากขึ้นเรื่อย ๆ ในขณะที่ค่า embedding vector ของ anchor และ negative image นั้นจะมีค่าต่างกันมากขึ้นเรื่อย ๆ
-
 
 สำหรับใครที่อยากลองเข้าไปเล่น ไปลองเปลี่ยนภาพดู หรือเปลี่ยนค่า $\alpha$ ก็สามารถเข้าไปตาม <a href='https://colab.research.google.com/drive/1ZATWxTuBKhNU8REOCmG0-f-aLRz_XUUa?usp=sharing'>colab</a> นี้ได้เลยครับ
 
