@@ -216,8 +216,7 @@ tags: ['deep learning','computer vision']
 รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
 
 ## Reference:
-- <a href='https://arxiv.org/pdf/1312.5602.pdf'>Playing Atari with Deep Reinforcement Learning</a>
-- <a href='https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf'>Human-level control through deep reinforcement learning</a>
+-  <a href="https://arxiv.org/pdf/1503.03832.pdf"> FaceNet: A Unified Embedding for Face Recognition and Clustering </a>
 
 
 
