@@ -282,6 +282,8 @@ tags: ['deep learning','reinforcement learning']
 - Reward จะเป็น 1 ในทุก timestep ที่แท่งไม้ยังไม่ล้ม
 - Episode จะจบลงต่อเมื่อรถออกนอกเฟรม หรือแท่งไม้ล้มลงมาเกิน 15 องศาจากแนวตั้ง
 
+สำหรับ code เวอร์ชันเต็มสามารถดูได้ที่ <a href="https://colab.research.google.com/drive/1ePu-UW4Pt3xqCmxpxtenD9RGvW2GtiqV?usp=sharing">colab</a> นี้ครับ
+
 1. เริ่มที่
 
 	```python
@@ -292,7 +294,7 @@ tags: ['deep learning','reinforcement learning']
 	    state = self.env.reset()
 	    trajectory = []
 	    while True:
-	      ## หา probability ของการเลือกแต่ละ action
+	      ## predict probability ของการเลือกแต่ละ action
 	      policy = agent(state[np.newaxis,:])[0]
 	      ## เลือก action แบบ stochastic policy gradient
 	      action = np.random.choice([0,1],p=policy.numpy())
@@ -309,7 +311,21 @@ tags: ['deep learning','reinforcement learning']
 	    return np.array(trajectory)
 	```
 
-2. ต่อมาเขียนฟังก์ชันเทรน
+2. ต่อมาเราก็สร้าง neural network กับ optimizer เตรียมไว้
+	
+	```python
+	def build_agent(state_size):
+	  input_layer = Input(shape = (state_size,))
+	  dense = Dense(100, activation='relu')(input_layer)
+	  dense = Dense(100, activation='relu')(dense)
+	  dense = Dense(100, activation='relu')(dense)
+	  output = Dense(2, activation='softmax')(dense)
+	  model = Model(input_layer,output)
+	  optimizer = Adam(lr=0.0001)
+	  return model,optimizer
+	```
+
+3. ต่อมาเขียนฟังก์ชันเทรน
 
 	```python
 	def basic_reinforce(env,agent,optimizer):
