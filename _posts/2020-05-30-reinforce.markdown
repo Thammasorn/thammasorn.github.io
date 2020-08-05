@@ -64,7 +64,7 @@ tags: ['deep learning','reinforcement learning']
 
 ในส่วนนี้จะพาทุกคนไปทำความรู้จักกับ policy gradient algorithm ว่ามันเป็นอย่างไร และเราจะสามารถเทรนมันได้อย่างไร
 
-#### Overview Architecture of Policy Gradient
+#### Overview of Policy Gradient
 
 สำหรับตัว policy gradient นั้น เราจะใช้ neural network ในการประมาณค่า stochastic policy ของแต่ละ state ที่ใส่เข้าไปให้เราโดยตรง จากรูปด้านล่างจะเห็นว่า output แต่ละ node ของ neural network นั้นจะเป็น probability ของการเลือกแต่ละ action
 
@@ -91,17 +91,18 @@ tags: ['deep learning','reinforcement learning']
 \end{equation}
 
 โดยที่
-- $m$ คือจำนวน trajectory หรือก็คือประสบการณ์ที่ได้จากการทดลองใช้ agent ไป interact กับ environment ประกอบไปด้วย state, action, และ reward ต่อกันไปเรื่อย ๆ 
+- $m$ คือจำนวน trajectory 
+	>trajectory ก็คือ serie ของประสบการณ์ที่ได้จากการทดลองใช้ agent ไป interact กับ environment ซึ่งจะประกอบไปด้วย state, action, และ reward ต่อกันไปเรื่อย ๆ 
 - $H$ คือความยาวของแต่ละ trajectory
 - $s_t^{(i)}$ คือ state ณ เวลา $t$ ใน trajectory ที่ $i$ 
 - $a_t^{(i)}$ คือ action ณ เวลา $t$ ใน trajectory ที่ $i$ 
 - $r_t^{(i)}$ คือ reward ณ เวลา $t$ ใน trajectory ที่ $i$ 
 
-ซึ่งถ้าเรามองแบบ intuitive เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้นขึ้น</span> ถ้า <span style="color:green;">summation ของ reward หลังจาก action นั้นมีค่าเป็นบวก</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
+ซึ่งถ้าเรามองแบบง่าย ๆ เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้นขึ้น</span> ถ้า <span style="color:green;">summation ของ reward หลังจาก action นั้นมีค่าเป็นบวก</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
 
 ซึ่งเดี๋ยวในหัวข้อถัดไปเราจะมาดูกันว่าสมการ \eqref{overview} มันมาได้ยังไง ซึ่งก็อาจจะยาวหน่อย แต่ก็อ่านเถอะนะ
 
-#### Backend of Policy Gradient
+#### Policy Gradient in Detail
 
 ถ้าเรามองย้อนกลับไปในสมการที่ \eqref{eq:Gt} นั้นจะเห็นได้ว่าตัว objective function นั้นเป็น summation ของ rewards ในระยะยาว หรือ $\sum_{t=1}^{\infty} \gamma^t r_t$
 
@@ -114,11 +115,11 @@ tags: ['deep learning','reinforcement learning']
 
 <img style="display: block;margin-left: auto;margin-right: auto; width: 50%;" src="/assets/img/Intro-RL/MDP.png" alt="...">
 
-นอกจากนี้ ถ้าเราใช้ stochastic policy ซึ่งใน state เดียวกัน เราอาจจะสุ่ม action ได้คนละแบบก็ได้ ซึ่งถ้าได้ action คนละแบบก็จะทำให้ได้ค่า $P(s'|s,a)$ ที่แตกต่างกันซึ่งอาจจะนำไปประสบการณ์ที่แตกต่างกันและได้รับ reward แตกต่างกันไปด้วย
+นอกจากนี้ ถ้าเราใช้ stochastic policy ซึ่งใน state เดียวกัน เราอาจจะสุ่ม action ได้คนละแบบก็ได้ ซึ่งถ้าได้ action คนละแบบก็จะทำให้ได้ค่า $P(s'\|s,a)$ ที่แตกต่างกันซึ่งอาจจะนำไปประสบการณ์ที่แตกต่างกันและได้รับ reward แตกต่างกันไปด้วย
 
-สรุปก็คือในแต่ละ episode นั้นรูปแบบของประสบการณ์นั้นจะเป็นไปได้หลากหลายแบบมาก ๆ เนื่องจากมันมีการสุ่มทั้ง state และ action ในแต่ละ timestep
+สรุปก็คือในแต่ละรอบที่เราให้ agent ไป interact กับ environment นั้น รูปแบบของประสบการณ์ที่ได้จะเป็นไปได้หลายแบบมาก ๆ เนื่องจากมีการสุ่มทั้ง state และ action ในแต่ละ timestep
 
-> ตัวอย่างของ episode คือเกม 1 เกม เล่นจนจบเกม 1 ตาคือ 1 episode 
+<!-- > ตัวอย่างของ episode คือเกม 1 เกม เล่นจนจบเกม 1 ตาคือ 1 episode  -->
 
 ซึ่งเราจะเรียก serie ของประสบการณ์ที่แตกต่างกันนั้นว่า trajectory หรือแทนว่า $\tau$ ซึ่งมันจะมีหน้าตาดังด้านล่าง ซึ่งจะเห็นได้ว่ามันประกอบไปด้วย state,action,reward ไปเรื่อย ๆ
 
@@ -152,9 +153,9 @@ tags: ['deep learning','reinforcement learning']
 	$${\color{purple}s_0},{\color{green}a_0},r_0,{\color{brown}s_1},{\color{green}a_1},r_1,...,{\color{brown}s}_{\color{blue}H},{\color{green}a}_{\color{blue}H},r_{\color{blue}H}$$
 
 	จะเห็นได้ว่า
-	- <span style="color:purple;">เราจะเริ่มจากการหา probability ของ state $s_0$ ก่อน (ซึ่งก็คือสมมติว่าเราจะสุ่มเกิดใน state ไหนก็ได้ ณ เวลา $t=0$ โดยที่ state $s_0$ ที่อยู่ใน trajectory นั้น ๆ มีโอกาสการเกิดเป็น $P(s_0)$) </span>
+	- <span style="color:purple;">เราจะเริ่มจากการหา probability ของ state $s_0$ ก่อน (ซึ่งก็คือสมมติว่าเราจะสุ่มเกิดใน state ไหนก็ได้ ณ เวลา $t=0$ โดยที่ state $s_0$ ที่อยู่ใน trajectory นั้น มีโอกาสการเกิดเป็น $P(s_0)$) </span>
 	- <span style="color:green;">หลังจากนั้นเราก็จะไปดูว่า ณ state $s_0$ นั้นมี probability ในการเลือก action $a_0$ ที่อยู่ใน trajectory เป็นเท่าไหร่ หรือก็คือค่า $\pi_\theta (a_0\|s_0)$</span> 
-	- <span style="color:brown;">และเราก็จะมาดูต่อว่าถ้าเราเลือก action นั้นใน state $s_0$ แล้ว ค่า probabiltiy ที่ state ถัดไปจะเป็น $s_1$ เป็นเท่าไหร่ หรือก็คือค่า $P(s_1\|s_0,a_0)$</span>
+	- <span style="color:brown;">และเราก็จะมาดูต่อว่าถ้าเราเลือก action $a_0$ ใน state $s_0$ แล้ว ค่า probabiltiy ที่ state ถัดไปจะเป็น $s_1$ เป็นเท่าไหร่ หรือก็คือค่า $P(s_1\|s_0,a_0)$</span>
 
 	แล้วเราก็นำทั้ง 3 ค่าด้านบนมาคูณกัน หลังจากนั้นเราก็คูณกับ $\color{green}\pi_\theta(a_1\|s_1)$ กับ $\color{brown}P(s_2\|s_1,a_1)$ และคูณค่าทั้งสองนี้ของ state และ action ถัดไปต่อไปเรื่อย ๆ จนครบทั้ง trajectory เราก็จะได้ค่า probability ของ trajectory นั้นแล้ว 
 
@@ -180,10 +181,7 @@ tags: ['deep learning','reinforcement learning']
 	
 	$$s_0,a_0,{\color{green}r_0},s_1,a_1,{\color{green}r_1},...,s_{\color{blue}H},a_{\color{blue}H},{\color{green}r_{\color{blue}H}}$$
 
-ตอนนี้เราก็ได้ทำความรู้จักกับสมการเป้าหมายที่เราจะ maximize ค่ามาแล้วซึ่งก็คือสมการที่ \eqref{weight-average-from-tau} และอย่างที่เราบอกไปว่า policy gradient นั้นเป็นวิธีในการปรับค่า neural network parameter หรือ $\theta$ ที่จะทำให้ตัว neural network นั้นสามารถทำงานเป็น policy function ที่ดีที่สุดได้ 
-> หรือก็คือเป็น policy ที่ทำให้ได้ reward ในระยะยาวมากที่สุด 
-
-มันก็เลยทำให้เราเขียนเป้าหมายของ policy gradient ได้ในรูปแบบด้านล่าง ซึ่งเป็นการหา $\theta$ ที่ทำให้เราได้ค่าในสมการที่   \eqref{weight-average-from-tau} มากที่สุด
+ตอนนี้เราก็ได้ทำความรู้จักกับสมการเป้าหมายที่เราจะ maximize ค่ามาแล้วซึ่งก็คือสมการที่ \eqref{weight-average-from-tau} และอย่างที่เราบอกไปว่า policy gradient นั้นเป็นวิธีในการปรับค่า neural network parameter หรือ $\theta$ ที่จะทำให้ตัว neural network นั้นสามารถประมาณ policy function ที่ดีที่สุดได้ หรือก็คือเราสามารถเขียนเป้าหมายของ policy gradient ได้ในรูปแบบด้านล่าง
 
 \begin{equation}
 \label{objective-2}
@@ -199,15 +197,16 @@ tags: ['deep learning','reinforcement learning']
 
 ![alt text](/assets/img/policy-gradient/gradient-ascent.png)
 
-ทุกอย่างช่างดูสวยงาม แต่ช้าก่อนนนน!!! <span style="color:red">ถ้าเราคิดดี ๆ แล้ว เราจะพบว่าเราไม่สามารถหา gradient หรือพจน์นี้ได้เลย $\nabla_\theta  \sum_{\tau} P(\tau; \theta) R(\tau)$ </span> เนื่องจากว่า
+แต่ว่าการหาค่า $\nabla_\theta \sum_{\tau} P(\tau; \theta) R(\tau)$ นั้น ตอนนี้มันยังติดปัญหาสำคัญอยู่สองประการด้วยกัน
 
-1. จะเห็นได้ว่าตัว objective function ของเรามันเป็น summation ของทุก $\tau$ ซึ่งจำนวน $\tau$ ที่เป็นไปได้อาจจะมีเยอะมาก ซึ่งการสร้าง $\tau$ แต่ละครั้งเราจะปล่อยให้ agent เราได้ไปเล่นใน environment จนจบ episode หนึ่ง ซึ่งใน environment ที่มีความ complex หน่อย ๆ การปล่อยให้ agent เล่นใน environment จนได้ครบทุก $\tau$ นั้นอาจจะเป็นไปไม่ได้เลย
+1. จะเห็นได้ว่าตัว objective function ของเรามันเป็น summation ของทุก $\tau$ ซึ่งจำนวน $\tau$ ที่เป็นไปได้อาจจะมีเยอะมาก ซึ่งการสร้าง $\tau$ แต่ละครั้งเราจะปล่อยให้ agent เราได้ไปเล่นใน environment จนจบ episode หนึ่ง ซึ่งใน environment ที่มีความ complex หน่อย ๆ การปล่อยให้ agent เล่นใน environment จนได้ครบทุก $\tau$ ที่เป็นไปได้นั้นอาจจะเป็นไปไม่ได้เลย เพราะมันอาจจะต้องเล่นเป็นจำนวนหลายรอบมาก ๆ
+	> ตัวอย่างของ episode คือเกม 1 เกม เล่นจนจบเกม 1 ตาคือ 1 episode 
 
 2.  ในตัว objective function มันมีพจน์ $P(\tau;\theta)$ ซึ่งเราเคยกระจายออกมาแล้วในสมการที่ \eqref{p-tau} และพบว่าหลัก ๆ มันคือการคูณกันของ $P(s_{t+1}\|s_t,a_t)$ และ $\pi_\theta(a\|s)$ 
 
-	ตัว  $\pi_\theta(a\|s)$ เนี่ยไม่มีปัญหาอะไร เนื่องจากว่าเป็น function ที่เรารู้อยู่แล้วว่ามันคืออะไร และเราสามารถหา derivative มันได้ (ก็มันคือ neural network เราเอง) แต่ตัวที่มีปัญหาคือ $P(s_{t+1}\|s_t,a_t)$ เนื่องจากว่ามันเป็น function การทำงานของ MDP ที่เราไม่รู้ว่ามันมีค่าเป็นเท่าไหร่ (อย่างที่เคยบอกไปว่า MDP อาจจะเป็น blackbox แบบนึง ที่เราไม่รู้กระบวนการทำงานข้างใน)
+	ตัว  $\pi_\theta(a\|s)$ เนี่ยไม่มีปัญหาอะไร เนื่องจากว่าเป็น function ที่เรารู้อยู่แล้วว่ามันคำนวณอย่างไร และเราก็สามารถหา derivative มันได้ด้วย (ก็มันคือ neural network เราเอง) แต่ตัวที่มีปัญหาคือ $P(s_{t+1}\|s_t,a_t)$ เนื่องจากว่ามันเป็น function การทำงานของ MDP ที่เราไม่รู้ว่ามันทำงานยังไง (อย่างที่เคยบอกไปว่า MDP อาจจะเป็น blackbox แบบนึง ที่เราไม่รู้กระบวนการทำงานข้างใน)
 
-แต่ว่าไม่ต้องห่วงง คนที่เค้าคิดค้น Policy Gradient เค้าหาทางออกไว้ให้แล้ว ซึ่งเดี๋ยวจะแสดงเป็น step-by-step ด้านล่าง
+ซึ่งคนที่เค้าคิดค้น Policy Gradient เค้าก็หาทางออกสำหรับปัญหาทั้งสองไว้ให้แล้ว ซึ่งเดี๋ยวจะแสดงเป็น step-by-step ด้านล่าง
 
 1. ก่อนอื่นเราย้าย gradient เข้าไปใน summation ก่อน (ปกติเวลาเราดิฟฟังก์ชันที่มีการบวกกันหลาย ๆ พจน์ เราก็ดิฟแยกพจน์กันอยู่แล้ว)
 	
@@ -425,9 +424,9 @@ $$
 			  Gt = cal_Gt(trajectory[:,2])
 			  ## วนลูปไปทีละ action ใน trajectory
 			  for i in range(len(trajectory)):
-			  	## หา gradient ของ log pi(a|s)
+				## หา gradient ของ log pi(a|s)
 			    gradient = tape.gradient(trajectory[i,1],agent.trainable_variables)
-			    ## คูณ gradient ด้วย Gt
+				## คูณ gradient ด้วย Gt
 			    gradient = [-g*Gt[i] for g in gradient]
 			    ## ปรับ neural network
 			    optimizer.apply_gradients(zip(gradient,agent.trainable_variables))
@@ -488,7 +487,7 @@ $$
 	![alt text](/assets/img/policy-gradient/corridor.png)
 
 <h4 style='color: red;'>จุดด้อย</h4>
-- ไม่การันตี global optimal policy ซึ่งเป็นเพราะว่าเราใช้ตัว gradient ascent ในการทำ มันอาจจะไปหยุดอยู่ที่ local optimal policy ตรงไหนก็ได้ ซึ่งแตกต่างจากพวกตระกูล Q-learning ที่มันการันตีตัว global optimal policy ถ้าเรา visit ครบทุก state และ action มากพอ (ซึ่งจริง ๆ เป็นไปได้ยากอยู่ดีแหละ)
+- ไม่การันตี global optimal policy ซึ่งเป็นเพราะว่าเราใช้ตัว gradient ascent ในการทำ มันอาจจะไปหยุดอยู่ที่ local optimal policy ตรงไหนก็ได้ ซึ่งแตกต่างจากพวกตระกูล Q-learning ที่มันการันตีตัว global optimal policy ถ้าเรา visit ครบทุก state และลองทำทุก action มากพอ (ซึ่งจริง ๆ เป็นไปได้ยากอยู่ดีแหละ)
 
 	![alt text](/assets/img/policy-gradient/localoptimal.png) 
 
@@ -521,11 +520,8 @@ $$
 
 <h1>Reference</h1>
 - <a href="https://sites.google.com/view/deep-rl-bootcamp/lectures">Lecture 4a: Deep RL Bootcamp, Berkley</a>
-
 - <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
-
 - <a href="http://incompleteideas.net/book/the-book-2nd.html">Reinforcement Learning: An Introduction (Richard S. Sutton and Andrew G. Barto)</a>
-
 - <a href="https://www.youtube.com/watch?v=yVCpYddRxAE&list=PLcBOyD1N1T-PyNUNA77lTYNCAeAMGxV5I&index=9">คอร์ส reinforcement learning จากภาควิศวกรรมคอมพิวเตอร์ จุฬาลงกรณ์มหาวิทยาลัย</a>
 
 <!-- ## Reference: -->
