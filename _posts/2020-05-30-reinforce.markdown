@@ -8,7 +8,7 @@ description: "บทความนี้จะพามารู้จักก
 tags: ['deep learning','reinforcement learning']
 ---
 
-ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว ซึ่งวิธีที่จะนำมาเขียนในบทความนี้ค่อนข้างจะเก่ามาก (น่าจะประมาณ 20 ปีได้) แล้วก็อาจจะไม่มีใครใช้กันแล้วในปัจจุบัน แต่ก็เป็นประตูที่ดีสู่ความใจในวิธีอื่น ๆ ในปัจจุบัน เพราะฉะนั้นแล้ว อ่านเถอะ อยากเขียน!!!!
+ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว ซึ่งวิธีที่จะนำมาเขียนในบทความนี้ค่อนข้างจะเก่ามาก (น่าจะประมาณ 20 ปีได้) แล้วก็อาจจะไม่มีใครใช้กันแล้วในปัจจุบัน แต่ก็เป็นประตูที่ดีสู่ความเข้าใจในวิธีอื่น ๆ ในปัจจุบัน เพราะฉะนั้นแล้ว อ่านเถอะ อยากเขียน!!!!
 
 
 ## Prerequisite Knowledge
@@ -70,14 +70,36 @@ tags: ['deep learning','reinforcement learning']
 
 ![alt text](/assets/img/policy-gradient/overview.png)
 
-ซึ่งสิ่งที่ policy gradient ทำก็คือพยายามปรับค่า neural network parameter เพื่อให้สามารถประมาณค่า $P(action\|state)$ ที่ทำให้ได้ reward ในระยะยาวหรือค่าในสมการที่ \eqref{eq:basic-policy} มากที่สุด หรือก็คือพยายามทำให้ neural network ประมาณค่า policy ที่ดีที่สุดให้ได้นั่นเอง
+ซึ่งสิ่งที่ policy gradient ทำก็คือพยายามปรับค่า neural network parameter เพื่อให้สามารถประมาณค่า $P(action\|state)$ ที่ทำให้ได้ reward ในระยะยาวหรือค่าในสมการที่ \eqref{eq:Gt} มากที่สุด หรือก็คือพยายามทำให้ neural network ประมาณค่า policy ที่ดีที่สุดให้ได้นั่นเอง
 
 จะเห็นได้ว่าตัว Policy Gradient นั้น เราใช้ตัว stochastic policy เป็นหลัก เนื่องจากว่ามันทำให้เราค่อย ๆ optimize ค่า objective function ได้แบบ smooth มากขึ้น ซึ่งจะเหมาะกับการทำ gradient ascent มากกว่า 
 
 ![alt text](/assets/img/policy-gradient/smooth.png)
 
+ซึ่ง gradient ascent นั้นก็จะอยู่ในรูปของสมการด้านล่าง ซึ่งก็คือเราพยายามหาความทิศทางของค่า $G_t$ เมื่อเทียบกับค่า $\theta$ แล้วค่อย ๆ ปรับ $\theta$ ไปในทิศทางที่ทำให้ค่า $G-t$ เพิ่มขึ้น
 
+\begin{equation}
+\label{gradient-ascent-basic}
+  	\theta = \theta + \alpha \nabla_\theta G_t
+\end{equation}
 
+โดยที่ตัว gradient ของ $G_t$ หรือ $\nabla_\theta G_t$ ในสมการด้านบน เค้าก็คิดมาให้แล้วว่ามันจะมีหน้าตาแบบนี้
+
+\begin{equation}
+\label{overview}
+	\frac{1}{m} \sum_{i=1}^{m} \sum_{t=0}^{H} \Bigg{(} {\color{blue} \nabla_\theta log\pi(a_t^{(i)}|s_t^{(i)})} {\color{green} \Big{(}\sum_{ t'=t}^{H} r(s_{t'}^{(i)},a_{t'}^{(i)})\Big{)}}\Bigg{)}
+\end{equation}
+
+โดยที่
+- $m$ คือจำนวน trajectory หรือก็คือประสบการณ์ที่ได้จากการทดลองใช้ agent ไป interact กับ environment ประกอบไปด้วย state, action, และ reward ต่อกันไปเรื่อย ๆ 
+- $H$ คือความยาวของแต่ละ trajectory
+- $s_t^{(i)}$ คือ state ณ เวลา $t$ ใน trajectory ที่ $i$ 
+- $a_t^{(i)}$ คือ action ณ เวลา $t$ ใน trajectory ที่ $i$ 
+- $r_t^{(i)}$ คือ reward ณ เวลา $t$ ใน trajectory ที่ $i$ 
+
+ซึ่งถ้าเรามองแบบ intuitive เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้นขึ้น</span> ถ้า <span style="color:green;">summation ของ reward หลังจาก action นั้นมีค่าเป็นบวก</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
+
+ซึ่งเดี๋ยวในหัวข้อถัดไปเราจะมาดูกันว่าสมการ \eqref{overview} มันมาได้ยังไง ซึ่งก็อาจจะยาวหน่อย พยายามเขียนทุกสเต็ปให้ละเอียดที่สุด แต่ก็อ่านเถอะนะ เพราะว่าถ้าอ่านแล้วเข้าใจจนจบได้ก็อาจจะทำให้เราเข้าใจ reinforcement learning ได้ดีขึ้น เพราะฉะนั้นแล้วอ่านเถอะ พลีสสส
 
 #### Backend of Policy Gradient
 
@@ -130,7 +152,7 @@ tags: ['deep learning','reinforcement learning']
 	$${\color{purple}s_0},{\color{green}a_0},r_0,{\color{brown}s_1},{\color{green}a_1},r_1,...,{\color{brown}s}_{\color{blue}H},{\color{green}a}_{\color{blue}H},r_{\color{blue}H}$$
 
 	จะเห็นได้ว่า
-	- <span style="color:purple;">เราจะเริ่มจากการหาว่า probability ของ state $s_0$ ก่อน (ซึ่งก็คือสมมติว่าเราจะสุ่มเกิดใน state ไหนก็ได้ ณ เวลา $t=0$ โดยที่ state $s_0$ ที่อยู่ใน trajectory นั้น ๆ มีโอกาสการเกิดเป็น $P(s_0)$) </span>
+	- <span style="color:purple;">เราจะเริ่มจากการหา probability ของ state $s_0$ ก่อน (ซึ่งก็คือสมมติว่าเราจะสุ่มเกิดใน state ไหนก็ได้ ณ เวลา $t=0$ โดยที่ state $s_0$ ที่อยู่ใน trajectory นั้น ๆ มีโอกาสการเกิดเป็น $P(s_0)$) </span>
 	- <span style="color:green;">หลังจากนั้นเราก็จะไปดูว่า ณ state $s_0$ นั้นมี probability ในการเลือก action $a_0$ ที่อยู่ใน trajectory เป็นเท่าไหร่ หรือก็คือค่า $\pi_\theta (a_0\|s_0)$</span> 
 	- <span style="color:brown;">และเราก็จะมาดูต่อว่าถ้าเราเลือก action นั้นใน state $s_0$ แล้ว ค่า probabiltiy ที่ state ถัดไปจะเป็น $s_1$ เป็นเท่าไหร่ หรือก็คือค่า $P(s_1\|s_0,a_0)$</span>
 
@@ -144,7 +166,7 @@ tags: ['deep learning','reinforcement learning']
 	- $a_0$ คือ action ที่เราทำไป ณ เวลา 0 ก็อาจจะเป็น action อะไรก็ได้ เช่น < หรือ > ขึ้นอยู่กับ $\pi(s\|a)$ เช่น  $\pi(A\|<)$, $\pi(A\|>)$ อาจจะมีค่าเป็น 0.2 และ 0.8
 	ซึ่ง trajectory ที่เป็นไปได้อาจจะออกมาในหน้าตา
 	
-	> $$\tau = A,>,10,B,<,5,C,>,100$$
+	> $$\tau = A,>,10,B,<,5,B,>,100,C,<,-10,A,<,10$$
 	
 	> ซึ่งก็คือ $s_0$ เป็น A และ $a_0$ เป็น > และ $r_0$ เป็น 10 นั่นเอง และค่า $P(s_1\|s_0,a_0)$ ก็คือค่า $P(B\|A,>)$ นั่นเอง
 
@@ -158,7 +180,10 @@ tags: ['deep learning','reinforcement learning']
 	
 	$$s_0,a_0,{\color{green}r_0},s_1,a_1,{\color{green}r_1},...,s_{\color{blue}H},a_{\color{blue}H},{\color{green}r_{\color{blue}H}}$$
 
-ตอนนี้เราก็ได้ทำความรู้จักกับสมการเป้าหมายที่เราจะ maximize ค่ามาแล้วก็คือสมการที่ \eqref{weight-average-from-tau} นั่นเอง และอย่างที่เราบอกไปว่า policy gradient นั้นเป็นวิธีในการปรับค่า neural network parameter หรือ $\theta$ ที่จะทำให้ตัว neural network นั้นสามารถทำงานเป็น policy function ที่ดีที่สุดได้ หรือก็คือเป็น policy ที่ทำให้ได้ reward ในระยะยาวมากที่สุด มันก็เลยทำให้เราเขียนเป้าหมายของ policy gradient ได้ในรูปแบบด้านล่าง ซึ่งก็คือการที่เราพยายามจะหา $\theta$ ที่ทำให้เราได้ค่าในสมการที่   \eqref{weight-average-from-tau} มากที่สุดนั่นเอง
+ตอนนี้เราก็ได้ทำความรู้จักกับสมการเป้าหมายที่เราจะ maximize ค่ามาแล้วซึ่งก็คือสมการที่ \eqref{weight-average-from-tau} และอย่างที่เราบอกไปว่า policy gradient นั้นเป็นวิธีในการปรับค่า neural network parameter หรือ $\theta$ ที่จะทำให้ตัว neural network นั้นสามารถทำงานเป็น policy function ที่ดีที่สุดได้ 
+> หรือก็คือเป็น policy ที่ทำให้ได้ reward ในระยะยาวมากที่สุด 
+
+มันก็เลยทำให้เราเขียนเป้าหมายของ policy gradient ได้ในรูปแบบด้านล่าง ซึ่งเป็นการหา $\theta$ ที่ทำให้เราได้ค่าในสมการที่   \eqref{weight-average-from-tau} มากที่สุด
 
 \begin{equation}
 \label{objective-2}
@@ -259,10 +284,10 @@ tags: ['deep learning','reinforcement learning']
 แล้วเราก็จะนำ gradient นี้ไปทำ gradient ascent ดังที่แสดงในสมการ \eqref{gradient-ascent}  ซึ่งถ้าเรามองแบบ intuitive เลยจะได้ว่า
 - ถ้า reward โดยรวมของ trajectory นั้นหรือ $R(\tau)$ มีค่ามาก เราจะพยายามเพิ่ม probability ของทุก action ใน trajectory นั้น
 - ถ้า reward โดยรวมของ trajectory นั้นหรือ $R(\tau)$ มีค่าเป็นบวกแต่ไม่มาก เราจะพยายามเพิ่ม probability ของทุก action ใน trajectory นั้นแต่ไม่มาก
-- ถ้า reward โดยรวมของ trajectory นั้นหรือ $R(\tau)$ มีค่าเป็นลบ เราจะพยายามลด probability ของทุก action ใน trajectory นั้นแต่ไม่มาก
+- ถ้า reward โดยรวมของ trajectory นั้นหรือ $R(\tau)$ มีค่าเป็นลบ เราจะพยายามลด probability ของทุก action ใน trajectory นั้น
 
 
-ซึ่งขั้นตอนการนำสมการ \eqref{basic-policy-gradient} นั้นก็จะมี step ง่าย ๆ เลยก็คือ
+ซึ่งขั้นตอนการนำสมการ \eqref{basic-policy-gradient} ไปใช้ก็จะมี step ง่าย ๆ เลยก็คือ
 1. ใช้ policy ปัจจุบันไปเก็บประสบการณ์หรือ trajectory มาจาก environment จำนวน $m$ trajectories หรือก็คือ $m$ episodes น่ะแหละ
 2. คำนวณ gradient ตามสมการที่  \eqref{basic-policy-gradient}
 3. อัพเดท neural network ด้วย gradient ในข้อที่ 2. เพื่อพัฒนา policy ของเรา
@@ -272,10 +297,12 @@ tags: ['deep learning','reinforcement learning']
 ![alt text](/assets/img/policy-gradient/policy-gradient.png) Ref: <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
 
 ## Reward-to-Go
-ก่อนหน้านี้เราคูณ gradient ของทุก action ใน trajectory ด้วย summation ของ reward ทั้งหมดใน trajectory นั้น ซึ่งเอาจริง ๆ มันก็แอบแปลกนิดนึงตรงที่ว่าเราดันไปยกเครดิตจาก reward ที่เกิดทีหลังให้กับ action บางตัวที่ทำหลัง reward นั้นซะอีก ดังสมการด้านล่างถ้าคิดดี ๆ จะเห็นว่าเรานำ reward ที่ $t>0$ มาคูณกับ gradient ของ action ที่ $t=0$ ด้วย
+ตอนนี้เราเอา reward รวมของทั้ง trajectory มาคูณกับ gradient ของทุก action ใน trajectory นั้นซึ่งมันก็แอบแปลก ๆ นิดนึงตรงที่ว่าเราดันไปยกเครดิตจาก reward ที่เกิดก่อนให้กับ action บางตัวที่ทำหลัง reward นั้นซะอีก ดังสมการด้านล่างถ้าคิดดี ๆ จะเห็นว่าเรานำ reward ที่ $t>0$ มาคูณกับ gradient ของ action ที่ $t=0$ ด้วย
 
 $$\frac{1}{m} \sum_{i=1}^{m} \sum_{t=0}^{H} \Bigg{(} \nabla_\theta log\pi(a_t^{(i)}|s_t^{(i)}) \Big{(}\sum_{\color{red} t'=0}^{H} r(s_{t'}^{(i)},a_{t'}^{(i)})\Big{)}\Bigg{)}
 $$
+
+> $$R(\tau) = \sum_{t=0}^{H} r(s_{t},a_{t})$$ ดังที่แสดงในสมการที่ \eqref{r-tau}
 
 เค้าก็เลยมักจะเปลี่ยนสมการนิดนึงงง ซึ่งเราจะคูณ gradient ของ action ใด ๆ ด้วย summation ของ reward หลังจาก action นั้นเท่านั้น 
 
@@ -426,5 +453,8 @@ $$
 
 <h1 style='color: red;'>Disclaimer</h1>
 รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
+
+<h1>Reference</h1>
+- <a href="https://www.youtube.com/watch?v=yVCpYddRxAE&list=PLcBOyD1N1T-PyNUNA77lTYNCAeAMGxV5I&index=9">คอร์ส reinforcement learning จากภาควิศวกรรมคอมพิวเตอร์ จุฬาลงกรณ์มหาวิทยาลัย</a>
 
 ## Reference:
