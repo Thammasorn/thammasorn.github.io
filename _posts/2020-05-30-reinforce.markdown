@@ -99,7 +99,7 @@ tags: ['deep learning','reinforcement learning']
 
 ซึ่งถ้าเรามองแบบ intuitive เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้นขึ้น</span> ถ้า <span style="color:green;">summation ของ reward หลังจาก action นั้นมีค่าเป็นบวก</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
 
-ซึ่งเดี๋ยวในหัวข้อถัดไปเราจะมาดูกันว่าสมการ \eqref{overview} มันมาได้ยังไง ซึ่งก็อาจจะยาวหน่อย พยายามเขียนทุกสเต็ปให้ละเอียดที่สุด แต่ก็อ่านเถอะนะ เพราะว่าถ้าอ่านแล้วเข้าใจจนจบได้ก็อาจจะทำให้เราเข้าใจ reinforcement learning ได้ดีขึ้น เพราะฉะนั้นแล้วอ่านเถอะ พลีสสส
+ซึ่งเดี๋ยวในหัวข้อถัดไปเราจะมาดูกันว่าสมการ \eqref{overview} มันมาได้ยังไง ซึ่งก็อาจจะยาวหน่อย แต่ก็อ่านเถอะนะ
 
 #### Backend of Policy Gradient
 
