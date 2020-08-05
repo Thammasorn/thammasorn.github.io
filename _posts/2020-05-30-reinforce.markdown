@@ -76,7 +76,7 @@ tags: ['deep learning','reinforcement learning']
 
 ![alt text](/assets/img/policy-gradient/smooth.png)
 
-ซึ่ง gradient ascent นั้นก็จะอยู่ในรูปของสมการด้านล่าง ซึ่งก็คือเราพยายามหาความทิศทางของค่า $G_t$ เมื่อเทียบกับค่า $\theta$ แล้วค่อย ๆ ปรับ $\theta$ ไปในทิศทางที่ทำให้ค่า $G-t$ เพิ่มขึ้น
+ซึ่ง gradient ascent นั้นก็จะอยู่ในรูปของสมการด้านล่าง ซึ่งก็คือเราพยายามหาความทิศทางของค่า $G_t$ เมื่อเทียบกับค่า $\theta$ แล้วค่อย ๆ ปรับ $\theta$ ไปในทิศทางที่ทำให้ค่า $G_t$ เพิ่มขึ้น
 
 \begin{equation}
 \label{gradient-ascent-basic}
