@@ -309,7 +309,21 @@ $$
 $$\frac{1}{m} \sum_{i=1}^{m} \sum_{t=0}^{H} \Bigg{(} \nabla_\theta log\pi(a_t^{(i)}|s_t^{(i)}) \Big{(}\sum_{\color{green} t'=t}^{H} r(s_{t'}^{(i)},a_{t'}^{(i)})\Big{)}\Bigg{)}
 $$
 
-ซึ่ง pseudo code เราจะเปลี่ยนไปดังนี้ 
+ซึ่ง pseudo code เราจะเปลี่ยนไปเป็นดังรูปด้านล่าง
+
+![alt text](/assets/img/policy-gradient/pseudo-rewardtogo.png)
+
+จะเห็นได้ว่า
+- ในตอนนี้ค่าที่นำไปคูณกับ gradient นั้นจะเป็น summation ของ reward หลัง action นั้น ๆ ซึ่งก็มีการคูณกับ reward discounted factor เพื่อกำหนดให้ reward ในอนาคตมีความสำคัญน้อยกว่าใน reward ในปัจจุบัน
+- นอกจากนี้จะเห็นได้ว่าในสมการการอัพเดทค่า $\theta$ นั้น เรามีการคูณ $G_t$ ด้วย $\gamma^t$ อีกทีหนึ่ง เพื่อกำหนดให้ state แรก ๆ ใน trajectory นั้นสำคัญกว่า state ถัด ๆ ไป ถ้าคิดกันแบบบ้าน ๆ ก็คือเค้าให้สำคัญกับจุดเริ่มต้นมากกว่า ถ้าเราเริ่มได้ดี ข้างหลังก็จะดีไปด้วย 
+
+<!-- หรือคิดอีกอย่างก็คือ probability ของ state หลัง ๆ ใน trajectory นั้นอาจจะน้อยมากก 
+> ลองนึกตามสมการ $P(\tau;\theta) = {\color{purple}P(s_0)} \prod_{t=0}^{\color{blue}H} {\color{brown} P(s_{t+1}|s_t,a_t)} {\color{green} \pi_\theta(a_t|s_t)}$
+เพราะมันต้องผ่าน probability ของ state และ action ก่อนหน้าไปตั้งหลาย step กว่าจะคูณ -->
+
+ซึ่งการทำ reward-to-go กับการคูณด้วย state discounted factor นั้นจะเป็นการลด variance ของ gradient วิธีหนึ่ง (เขียนรายละเอียดไว้ใน section ข้อด้อยข้างล่าง ว่า variance มันมาจากไหน) ซึ่งจะทำให้เราสามารถเทรน network ได้แบบมีเสถียรภาพและได้ gradient ที่แม่นยำมากขึ้น ซึ่งจะช่วยให้ลู่เข้าสู่ optimal policy ได้เร็ว ๆ
+
+> 
 
 ## Implementation
 ในบทความนี้ก็จะทดลองใช้ policy gradient กับ <a href="https://gym.openai.com/envs/CartPole-v0/">CartPole</a> environment ให้ดูกันนะครับ
@@ -365,47 +379,103 @@ $$
 	  return model,optimizer
 	```
 
-3. ต่อมาเขียนฟังก์ชันเทรน
+3. ต่อมาเขียนฟังก์ชันเทรนซึ่งเดี๋ยวเราจะลองใช้ทั้ง reinforce algorithm แบบธรรมดา กับแบบ reward-to-go มาลองดู
 
-	```python
-	def basic_reinforce(env,agent,optimizer):
-	  with tf.GradientTape(persistent=True) as tape:
-	    trajectory = env.generate_trajectory(agent)
-	    log_pi = list(trajectory[:,1])
-	  ## Sum reward ทั้ง trajectory
-	  R_tau = np.sum(trajectory[:,2])
-	  ## หา gradient ของ summation ของ log(a|s) ของทุก a และ s ใน trajectory
-	  gradient = tape.gradient(log_pi,agent.trainable_variables)
-	  ## นำ gradient มาคูณกับ R(tau) 
-	  ## ปล.สังเกตุว่าเราต้องใส่เครื่องหมายลบไปด้วย เพราะปกติเราคำสั่ง apply_gradient มันจะทำ gradient
-	  ##    descent ซึ่งเป็นการ minimize แต่เราจะทำ gradient ascent ซึ่งเป็นการ maximize
-	  gradient = [-g*R_tau for g in gradient]
-	  ## ปรับค่า neural network parameter ด้วย gradient ที่หาไว้
-	  optimizer.apply_gradients(zip(gradient,agent.trainable_variables))
-	  del tape
-	  return trajectory ## return list of reward สำหรับเอาไป track ประวัติเฉย ๆ 
-	```
+	- แบบธรรมดา
+
+		```python
+		def basic_reinforce(env,agent,optimizer):
+		  with tf.GradientTape(persistent=True) as tape:
+		    trajectory = env.generate_trajectory(agent)
+		    log_pi = list(trajectory[:,1])
+		  ## Sum reward ทั้ง trajectory
+		  R_tau = np.sum(trajectory[:,2])
+		  ## หา gradient ของ summation ของ log(a|s) ของทุก a และ s ใน trajectory
+		  gradient = tape.gradient(log_pi,agent.trainable_variables)
+		  ## นำ gradient มาคูณกับ R(tau) 
+		  ## ปล.สังเกตุว่าเราต้องใส่เครื่องหมายลบไปด้วย เพราะปกติเราคำสั่ง apply_gradient มันจะทำ gradient
+		  ##    descent ซึ่งเป็นการ minimize แต่เราจะทำ gradient ascent ซึ่งเป็นการ maximize
+		  gradient = [-g*R_tau for g in gradient]
+		  ## ปรับค่า neural network parameter ด้วย gradient ที่หาไว้
+		  optimizer.apply_gradients(zip(gradient,agent.trainable_variables))
+		  del tape
+		  return trajectory ## return list of reward สำหรับเอาไป track ประวัติเฉย ๆ 
+		```
+	- แบบ Reward-to-Go 
+		- ก่อนอื่นสร้างฟังก์ชันสำหรับคำนวณ summation ของ reward เพื่อให้เครดิต action แต่ละตัวก่อน ซึ่งก็คือ $G_t = \sum_{k=t}^{H} \gamma^{k-t} r_k$
+			```python
+			def cal_Gt(reward_list,gamma=0.99):
+			  sum_reward = 0
+			  Gt = []
+			  for reward in reversed(reward_list):
+			    sum_reward *= gamma
+			    sum_reward += reward
+			    Gt.append(sum_reward)
+			  return list(reversed(Gt))
+			print(cal_Gt([1,1,1,0,0]))
+			## Ouput: [2.9701, 1.99, 1.0, 0.0, 0.0]
+			## จะเห็นได้ว่า 0,0 สองตัวหลังนั้นคือเราจะไม่ให้เครดิตกับ action 2 สุดท้ายซึ่งเกิดทีหลัง reward 3 ตัวแรก
+			```
+		- แล้วก็สร้างฟังก์ชันเทรนด้วย reward-to-go
+			```python
+			def reinforce_with_reward_to_go(env,agent,optimizer):
+			  with tf.GradientTape(persistent=True) as tape:
+			    trajectory = env.generate_trajectory(agent)
+			  ## คำนวณ G_t ของแต่ละ timestep
+			  Gt = cal_Gt(trajectory[:,2])
+			  ## วนลูปไปทีละ action ใน trajectory
+			  for i in range(len(trajectory)):
+			  	## หา gradient ของ log pi(a|s)
+			    gradient = tape.gradient(trajectory[i,1],agent.trainable_variables)
+			    ## คูณ gradient ด้วย Gt
+			    gradient = [-g*Gt[i] for g in gradient]
+			    ## ปรับ neural network
+			    optimizer.apply_gradients(zip(gradient,agent.trainable_variables))
+			  del tape
+			  return trajectory
+			```
+
 
 4. หลังจากนั้นเราก็เทรนโลดดด 
 
 	```python
-	## สร้าง Environment และ Agent
-	cartpole = CartPole()
-	agent,optimizer = build_agent(4)
-	## init list เปล่า ๆ ไว้ track ประวัติการเทรน
-	reward_history = []
-	prob_go_right = []
-	## เทรน 300 eps
-	for i in tqdm(range(1001)):
-	  trajectory = basic_reinforce(cartpole,agent)
-	  reward_history.append(len(trajectory))
+	def train(train_function,max_step=30000):
+	  ## สร้าง Environment และ Agent
+	  cartpole = CartPole()
+	  agent,optimizer = build_agent(4)
+	  ## init list เปล่า ๆ ไว้ track ประวัติการเทรน
+	  reward_history = {}
+	  step = 0
+	  while step<max_step:
+	    trajectory = train_function(cartpole,agent,optimizer)
+	    reward_history[step] = len(trajectory)
+	    step += len(trajectory)
+	  return reward_history,agent
+	## Train
+	history_basic,agent_basic = train(basic_reinforce)
+	history_reward_to_go,agent_reward_to_go = train(reinforce_with_reward_to_go)
 	```
 
-5. แล้วก็พล็อตผลมาดูจะเห็นได้ว่าในระหว่างการเทรนนั้น episode length นั้นจะเพิ่มขึ้นเรื่อย ๆ ซึ่งก็คือ agent เราสามารถเลี้ยงท่อนไม้ไม่ให้ล้มได้นานขึ้นนั่นเอง
+5. แล้วก็พล็อตผลมาดูจะเห็นได้ว่าในระหว่างการเทรนนั้น episode length นั้นจะเพิ่มขึ้นเรื่อย ๆ ซึ่งก็คือ agent เราสามารถเลี้ยงท่อนไม้ไม่ให้ล้มได้นานขึ้นนั่นเอง ซึ่งจะเห็นได้ว่าการใช้ reward-to-go นั้นสามารถช่วยให้ policy-gradient เรียนรู้ได้เร็วยิ่งขึ้น
+	
+	![alt text](/assets/img/policy-gradient/exp-result.png)
 
-	```python
-	```
-
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6" style="border:1px solid; border-color: white;">
+			<h5 style="text-align: center;">
+				<b><u>ก่อน Train</u></b>
+			</h5>
+			<img src="/assets/img/policy-gradient/before-train.gif" style=" padding-left: 0;padding-right: 0;" />
+		</div>
+		<div class="col-md-6" style="border:1px solid; border-color: white;">
+			<h5 style="text-align: center; padding-bottom: 0pt;">
+				<b><u>หลังเทรน</u></b>
+			</h5>
+			<img src="/assets/img/policy-gradient/after-train.gif" style="padding-top: 0pt;" />
+		</div>
+	</div>
+</div>
 
 <h2> <span style='color: green;'>จุดเด่น</span>และ<span style='color: red;'>จุดด้อย</span>ของ Policy Gradient</h2>
 
