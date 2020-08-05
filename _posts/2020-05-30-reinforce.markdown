@@ -13,7 +13,7 @@ tags: ['deep learning','reinforcement learning']
 
 ## Prerequisite Knowledge
 
-ก่อนจะเข้าเรื่อง Policy Gradient อยากท้าวความถึงความรู้ที่เราควรรู้ก่อนเริ่มกันก่อน
+ก่อนจะเข้าเรื่อง Policy Gradient อยากเท้าความถึงความรู้ที่เราควรรู้ก่อนเริ่มกันก่อน
 
 #### Markov Decision Process
 
