@@ -8,7 +8,7 @@ description: "บทความนี้จะพามารู้จักก
 tags: ['deep learning','reinforcement learning']
 ---
 
-ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว ซึ่งวิธีที่จะนำมาเขียนในบทความนี้ค่อนข้างจะเก่ามาก (น่าจะประมาณ 20 ปีได้) แล้วก็อาจจะไม่มีใครใช้กันแล้วในปัจจุบัน แต่ก็เป็นประตูที่ดีสู่ความเข้าใจในวิธีอื่น ๆ ในปัจจุบัน เพราะฉะนั้นแล้ว อ่านเถอะ อยากเขียน!!!!
+ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว ซึ่งวิธีที่จะนำมาเขียนในบทความนี้ค่อนข้างจะเก่ามาก (น่าจะประมาณ 20 ปีได้) แล้วก็อาจจะไม่มีใครใช้กันแล้วในปัจจุบัน แต่ก็เป็นประตูที่ดีสู่ความเข้าใจในวิธีอื่น ๆ ในปัจจุบัน เพราะฉะนั้นแล้ว อ่านเถอะ
 
 
 ## Prerequisite Knowledge
@@ -516,18 +516,16 @@ $$
 
 	แต่ว่าก็มีวิธีในการลด variance อยู่ เช่น การลบกับ baseline ที่เป็น state value หรือการใช้ actor-critic ที่เราใช้ neural network อีกตัวมาประมาณค่า cumulative reward ให้แทนที่จะใช้ summation จาก trajectory ปัจจุบัน ซึ่งถ้ามีโอกาสจะมาเขียนให้อ่านกันครับ ที่จริงตอนแรกก็กะจะเขียนในบทความนี้เลย แต่เขียนไปเขียนมายาวเกิน เลยขอตัดจบไปก่อน 
 
-
-
-
-<!-- <span style="color:red;">ยังเขียนบ่เสร็จเด้อ</span> -->
-
 <h1 style='color: red;'>Disclaimer</h1>
 รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
 
 <h1>Reference</h1>
 - <a href="https://sites.google.com/view/deep-rl-bootcamp/lectures">Lecture 4a: Deep RL Bootcamp, Berkley</a>
-<a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
-- <a href="http://incompleteideas.net/book/the-book-2nd.html">Ref:Reinforcement Learning: An Introduction (Richard S. Sutton and Andrew G. Barto)</a>
+
+- <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
+
+- <a href="http://incompleteideas.net/book/the-book-2nd.html">Reinforcement Learning: An Introduction (Richard S. Sutton and Andrew G. Barto)</a>
+
 - <a href="https://www.youtube.com/watch?v=yVCpYddRxAE&list=PLcBOyD1N1T-PyNUNA77lTYNCAeAMGxV5I&index=9">คอร์ส reinforcement learning จากภาควิศวกรรมคอมพิวเตอร์ จุฬาลงกรณ์มหาวิทยาลัย</a>
 
 <!-- ## Reference: -->
