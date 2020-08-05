@@ -2,13 +2,13 @@
 layout: post
 title:  "รู้จักกับ Policy Gradient <br> (reinforce algorithm)"
 date:   2020-07-30 18:00:00 +0700
-img_thumbnail: /assets/img/facenet/overview-2.png
+img_thumbnail: /assets/img/policy-gradient/test_anim.gif
 img_header: /assets/img/header/pg.webp
 description: "บทความนี้จะพามารู้จักกับวิธี reinforcement learning อีกแบบหนึ่งนอกจากพวก Q-learning โดยที่ในบทความนี้จะเป็นการ introduce ตัว policy-based reinforcement learning ตั้งแต่ทฤษฏีไปจนถึง coding ง่าย ๆ เพื่อทำงานทดลอง"
 tags: ['deep learning','reinforcement learning']
 ---
 
-ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว
+ในบทความนี้จะ intro วิธีของ reinforcement learning ในฝั่งของ policy-based reinforcement learning กันบ้าง หลังจากพอจะรู้จักกับ Q-learning, Deep Q Learning ที่เป็น value-based reinforcement learning กันมาแล้ว ซึ่งวิธีที่จะนำมาเขียนในบทความนี้ค่อนข้างจะเก่ามาก (น่าจะประมาณ 20 ปีได้) แล้วก็อาจจะไม่มีใครใช้กันแล้วในปัจจุบัน แต่ก็เป็นประตูที่ดีสู่ความใจในวิธีอื่น ๆ ในปัจจุบัน เพราะฉะนั้นแล้ว อ่านเถอะ อยากเขียน!!!!
 
 
 ## Prerequisite Knowledge
@@ -271,6 +271,19 @@ tags: ['deep learning','reinforcement learning']
 
 ![alt text](/assets/img/policy-gradient/policy-gradient.png) Ref: <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
 
+## Reward-to-Go
+ก่อนหน้านี้เราคูณ gradient ของทุก action ใน trajectory ด้วย summation ของ reward ทั้งหมดใน trajectory นั้น ซึ่งเอาจริง ๆ มันก็แอบแปลกนิดนึงตรงที่ว่าเราดันไปยกเครดิตจาก reward ที่เกิดทีหลังให้กับ action บางตัวที่ทำหลัง reward นั้นซะอีก ดังสมการด้านล่างถ้าคิดดี ๆ จะเห็นว่าเรานำ reward ที่ $t>0$ มาคูณกับ gradient ของ action ที่ $t=0$ ด้วย
+
+$$\frac{1}{m} \sum_{i=1}^{m} \sum_{t=0}^{H} \Bigg{(} \nabla_\theta log\pi(a_t^{(i)}|s_t^{(i)}) \Big{(}\sum_{\color{red} t'=0}^{H} r(s_{t'}^{(i)},a_{t'}^{(i)})\Big{)}\Bigg{)}
+$$
+
+เค้าก็เลยมักจะเปลี่ยนสมการนิดนึงงง ซึ่งเราจะคูณ gradient ของ action ใด ๆ ด้วย summation ของ reward หลังจาก action นั้นเท่านั้น 
+
+$$\frac{1}{m} \sum_{i=1}^{m} \sum_{t=0}^{H} \Bigg{(} \nabla_\theta log\pi(a_t^{(i)}|s_t^{(i)}) \Big{(}\sum_{\color{green} t'=t}^{H} r(s_{t'}^{(i)},a_{t'}^{(i)})\Big{)}\Bigg{)}
+$$
+
+ซึ่ง pseudo code เราจะเปลี่ยนไปดังนี้ 
+
 ## Implementation
 ในบทความนี้ก็จะทดลองใช้ policy gradient กับ <a href="https://gym.openai.com/envs/CartPole-v0/">CartPole</a> environment ให้ดูกันนะครับ
 
@@ -280,11 +293,11 @@ tags: ['deep learning','reinforcement learning']
 - State คือ ตำแหน่งของรถ, ความเร็ว, มุมของแท่งไม้, ความเร็วมุมของแท่งไม้ 
 - Action คือขยับไปทางซ้ายหรือขวา
 - Reward จะเป็น 1 ในทุก timestep ที่แท่งไม้ยังไม่ล้ม
-- Episode จะจบลงต่อเมื่อรถออกนอกเฟรม หรือแท่งไม้ล้มลงมาเกิน 15 องศาจากแนวตั้ง
+- Episode จะจบลงต่อเมื่อรถออกนอกเฟรม หรือแท่งไม้เอียงลงมาเกิน 15 องศาจากแนวตั้ง
 
 สำหรับ code เวอร์ชันเต็มสามารถดูได้ที่ <a href="https://colab.research.google.com/drive/1ePu-UW4Pt3xqCmxpxtenD9RGvW2GtiqV?usp=sharing">colab</a> นี้ครับ
 
-1. เริ่มที่
+1. เริ่มที่สร้าง environment และเขียนฟังก์ชันสำหรับสร้าง trajectory เตรียมไว้ สังเกตได้ว่าในตอนเลือก action นั้นเราไม่ต้องใช้ epsilon-greedy เหมือนใน Q learning แล้วเพราะว่าการเลือก action ของเราเป็น stochastic policy ซึ่งเราก็สุ่มเลือกในระดับนึง ซึ่งก็นับว่าเป็น exploration อยู่แล้ว
 
 	```python
 	class CartPole:
@@ -345,6 +358,69 @@ tags: ['deep learning','reinforcement learning']
 	  del tape
 	  return trajectory ## return list of reward สำหรับเอาไป track ประวัติเฉย ๆ 
 	```
+
+4. หลังจากนั้นเราก็เทรนโลดดด 
+
+	```python
+	## สร้าง Environment และ Agent
+	cartpole = CartPole()
+	agent,optimizer = build_agent(4)
+	## init list เปล่า ๆ ไว้ track ประวัติการเทรน
+	reward_history = []
+	prob_go_right = []
+	## เทรน 300 eps
+	for i in tqdm(range(1001)):
+	  trajectory = basic_reinforce(cartpole,agent)
+	  reward_history.append(len(trajectory))
+	```
+
+5. แล้วก็พล็อตผลมาดูจะเห็นได้ว่าในระหว่างการเทรนนั้น episode length นั้นจะเพิ่มขึ้นเรื่อย ๆ ซึ่งก็คือ agent เราสามารถเลี้ยงท่อนไม้ไม่ให้ล้มได้นานขึ้นนั่นเอง
+
+	```python
+	```
+
+
+<h2> <span style='color: green;'>จุดเด่น</span>และ<span style='color: red;'>จุดด้อย</span>ของ Policy Gradient</h2>
+
+<h4 style='color: green;'>จุดเด่น</h4>
+- ที่จริงแล้วมันทำงานกับ continuous action space ได้ ด้วยการที่ให้ neural network เราประมาณค่า mean และ variance ของ action และเราก็สุ่ม action จาก probability density function ที่มี mean และ variance ตามนั้น แต่ว่าในบทความนี้ขออนุญาตไม่พูดถึง เพราะทุกวันนี้ก็ไม่น่ามีใครใช้แล้วมั้ง
+- มันทำงานกับ stochastic policy ซึ่งในบางปัญหามันก็ดีกว่า deterministic policy อย่างเช่นว่า เราจะสร้าง bot ไปเล่นเกมเป่ายิ้งฉุบ ที่ optimal policy คือการออกค้อน กรรไกร กระดาษด้วย probability เท่า ๆ กัน เพราะถ้าเราใช้ deterministic policy เราอาจจะถูกอีกฝ่ายจับทางได้ 
+	
+	แต่ว่าถ้าปัญหาไหนที่มันต้องการ deterministic policy ตัว policy gradient เราจะค่อย ๆ ปรับ probability ของ optimal action ไปให้ใกล้ ๆ 1 หรือก็คือปรับไปจนเป็น deterministic policy ไปให้เอง อย่างเช่นตัวอย่างด้านล่าง เราลองใช้ policy gradient กับปัญหาง่าย ๆ คือเริ่มที่ตรงกลาง ถ้าเดินไปทางขวาจนสุดจะได้ reward +1 แต่ถ้าเดินไปทางซ้ายจนสุดจะได้ reward -1 จะเห็นได้ว่าเมื่อเทรนไปเรื่อย ๆ ค่า probability ของการเดินไปทางขวานั้นจะเข้าใกล้ 1 มากขึ้นเรื่อย ๆ
+
+	![alt text](/assets/img/policy-gradient/corridor.png)
+
+<h4 style='color: red;'>จุดด้อย</h4>
+- ไม่การันตี global optimal policy ซึ่งเป็นเพราะว่าเราใช้ตัว gradient ascent ในการทำ มันอาจจะไปหยุดอยู่ที่ local optimal policy ตรงไหนก็ได้ ซึ่งแตกต่างจากพวกตระกูล Q-learning ที่มันการันตีตัว global optimal policy ถ้าเรา visit ครบทุก state และ action มากพอ (ซึ่งจริง ๆ เป็นไปได้ยากอยู่ดีแหละ)
+
+	![alt text](/assets/img/policy-gradient/localoptimal.png) 
+
+- ใช้ experience เปลือง ไม่สามารถ reuse experience เก่า ๆ มาอัพเดท neural network ใหม่ได้ เนื่องจากว่า policy ในอดีตกับ policy ในปัจจุบันที่เรากำลัง optimize มันอยู่เนี่ย มันจะมี behaviour ไม่เหมือนกันแล้ว ซึ่งก็จะส่งผลให้ค่า $P(\tau;\theta)$ ไม่เหมือนกัน ซึ่งถ้ายังจำกันได้เราบอกว่าค่าที่เราจะ optimize เนี่ยมันคือ 
+
+	$$\sum_{\tau} {\color{red}P(\tau;\theta)} R(\tau)$$ 
+
+	ซึ่งถ้า $\theta$ เปลี่ยนไป ตัวฟังก์ชัน $$\sum_{\tau} P(\tau;\theta) R(\tau)$$ นี้ก็จะอยู่กันคนละค่า หรือคนละที่ ค่า gradient ก็จะแตกต่างกันไปด้วย 
+
+	![alt text](/assets/img/policy-gradient/offline.png)
+
+	หรือก็คือ experience ที่เก็บมาด้วย policy เก่า ๆ มันตกยุคไปแล้ว หรืออย่างเช่นว่า ใน policy เมื่อ 100 episodes ที่แล้วเราอาจจะไป trajectory นึง แต่ในปัจจุบันเราเรียนรู้จนเราไปในอีกทางนึงอย่างสิ้นเชิงแล้ว เราจะเอา experience ของเมื่อ 100 episodes ที่แล้วมาก็จะแปลกๆหน่อย ที่จริงคือไม่ได้เลยแหละ
+
+<!-- 	ซึ่งที่จริงก็มีวิธีทำให้เราใช้ experience เก่า ๆ มา reuse ได้อยู่บ้าง เช่น importance sampling ซึ่งเอาไว้จะหาโอกาสเขียนอธิบายอีกทีครับ
+ -->
+- variance ของการเทรนสูง เนื่องจากว่าตอนนี้เราคูณ gradient ด้วย summation ของ reward ของ trajectory ล่าสุด 
+
+	$$\nabla_\theta log \pi_\theta(a_t|s_t) {\color{red}R(\tau)}$$	
+
+	ซึ่งสมมติว่า trajectory มันยาวในระดับหนึ่ง และ reward แต่ละตัวก็สุ่มมาจาก distribution อะไรซักอย่าง แล้วเราเอา reward ทุกตัวมาบวกกันหมดเลย สิ่งที่เกิดขึ้นคือ variance มันจะกว้างมาก (variance จะเท่ากับ variance ของ reward แต่ละ timestep บวกกัน) และเมื่อ variance มันกว้างมาก สมมติเราได้ trajectory ที่ได้ summation ของ reward อยู่ขอบ ๆ ของ distribution เลย gradient ในการอัพเดทรอบนั้นจะทรงพลังมาก ซึ่งอาจจะ dominate การอัพเดทก่อนหน้าไปหมดเลยก็ได้
+
+	![alt text](/assets/img/policy-gradient/var-r.png)
+
+	>ถ้าใครนึกภาพตามไม่ออก ให้ลองคิดว่าแบบนี้สมมติเรามี reward สามตัว ทั้ง 3 ตัวจะถูกสุ่มมาจาก probability density ตัวนึงที่มี min เป็น -10 และ max เป็น +10 ก็แปลว่า reward รวมทั้งสามตัวน้อยที่สุดที่เป็นไปได้คือ -30 ในขณะที่มากที่สุดที่เป็นไปได้คือ +30 ซึ่งถ้าเรายิ่งเพิ่มจำนวน reward เข้าไป range ของ 2 ค่านี้ก็จะกว้างขึ้นเรื่อย ๆ  
+
+	แต่ว่าก็มีวิธีในการลด variance อยู่ เช่น การลบกับ baseline ที่เป็น state value หรือการใช้ actor-critic ที่เราใช้ neural network อีกตัวมาประมาณค่า cumulative reward ให้แทนที่จะใช้ summation จาก trajectory ปัจจุบัน ซึ่งถ้ามีโอกาสจะมาเขียนให้อ่านกันครับ ที่จริงตอนแรกก็กะจะเขียนในบทความนี้เลย แต่เขียนไปเขียนมายาวเกิน เลยขอตัดจบไปก่อน 
+
+
+
 
 <span style="color:red;">ยังเขียนบ่เสร็จเด้อ</span>
 
