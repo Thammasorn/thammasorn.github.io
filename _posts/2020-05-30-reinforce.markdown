@@ -135,7 +135,7 @@ tags: ['deep learning','reinforcement learning']
    \mathbb{E}[\sum_{t=1}^{\infty} r_t] = \frac{\sum_{\tau} \sum_{t=1}^{\infty} r^\tau_t}{N}
 \end{equation}
 
-แต่ว่าในแต่ละ $\tau$ นั้นอาจจะมีโอกาสเกิดขึ้นเยอะหรือเกิดขึ้นน้อยแตกต่างกันไป เราก็เลยจะ weight มันด้วย probability ของ $\tau$ นั้น
+แต่ว่าแต่ละ $\tau$ นั้นอาจจะมีโอกาสเกิดขึ้นเยอะหรือเกิดขึ้นน้อยแตกต่างกันไป เราก็เลยจะ weight มันด้วย probability ของ $\tau$ นั้น
 
 \begin{equation}
 \label{weight-average-from-tau}
