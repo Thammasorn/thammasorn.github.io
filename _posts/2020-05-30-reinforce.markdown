@@ -311,7 +311,7 @@ $$
 
 ซึ่ง pseudo code เราจะเปลี่ยนไปเป็นดังรูปด้านล่าง
 
-![alt text](/assets/img/policy-gradient/pseudo-rewardtogo.png)
+![alt text](/assets/img/policy-gradient/pseudo-rewardtogo.png) <a href="http://incompleteideas.net/book/the-book-2nd.html">Ref:Reinforcement Learning: An Introduction (Richard S. Sutton and Andrew G. Barto)</a>
 
 จะเห็นได้ว่า
 - ในตอนนี้ค่าที่นำไปคูณกับ gradient นั้นจะเป็น summation ของ reward หลัง action นั้น ๆ ซึ่งก็มีการคูณกับ reward discounted factor เพื่อกำหนดให้ reward ในอนาคตมีความสำคัญน้อยกว่าใน reward ในปัจจุบัน
@@ -519,12 +519,15 @@ $$
 
 
 
-<span style="color:red;">ยังเขียนบ่เสร็จเด้อ</span>
+<!-- <span style="color:red;">ยังเขียนบ่เสร็จเด้อ</span> -->
 
 <h1 style='color: red;'>Disclaimer</h1>
 รายละเอียดในบทความนี้มาจากความเข้าใจส่วนตัว อาจมีข้อผิดพลาด หากพบจุดผิดพลาด ขอความกรุณาแจ้งทาง facebook หรือ email: thammasorn.han@hotmail.com
 
 <h1>Reference</h1>
+- <a href="https://sites.google.com/view/deep-rl-bootcamp/lectures">Lecture 4a: Deep RL Bootcamp, Berkley</a>
+<a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa17/f17docs/lecture_4_policy_gradient.pdf">CS 294-112: Deep Reinforcement Learning, Sergey Levine, Berkeley </a>
+- <a href="http://incompleteideas.net/book/the-book-2nd.html">Ref:Reinforcement Learning: An Introduction (Richard S. Sutton and Andrew G. Barto)</a>
 - <a href="https://www.youtube.com/watch?v=yVCpYddRxAE&list=PLcBOyD1N1T-PyNUNA77lTYNCAeAMGxV5I&index=9">คอร์ส reinforcement learning จากภาควิศวกรรมคอมพิวเตอร์ จุฬาลงกรณ์มหาวิทยาลัย</a>
 
-## Reference:
+<!-- ## Reference: -->
