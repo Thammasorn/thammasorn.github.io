@@ -98,7 +98,7 @@ tags: ['deep learning','reinforcement learning']
 - $a_t^{(i)}$ คือ action ณ เวลา $t$ ใน trajectory ที่ $i$ 
 - $r_t^{(i)}$ คือ reward ณ เวลา $t$ ใน trajectory ที่ $i$ 
 
-ซึ่งถ้าเรามองแบบง่าย ๆ เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้นขึ้น</span> ถ้า <span style="color:green;">summation ของ reward หลังจาก action นั้นมีค่าเป็นบวก</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
+ซึ่งถ้าเรามองแบบง่าย ๆ เลยจะเห็นได้ว่า เราพยายามจะ<span style="color:blue;">ปรับ probability ของ action นั้น</span> ตามทิศทางและน้ำหนักของ <span style="color:green;">summation ของ reward หลังจาก action นั้น</span> หรือพูดอีกอย่างก็คือเรา weight ตัว gradient ของแต่ละ action ด้วย summation ของ reward หลังจากนั้นนั่นเอง
 
 ซึ่งเดี๋ยวในหัวข้อถัดไปเราจะมาดูกันว่าสมการ \eqref{overview} มันมาได้ยังไง ซึ่งก็อาจจะยาวหน่อย แต่ก็อ่านเถอะนะ
 
