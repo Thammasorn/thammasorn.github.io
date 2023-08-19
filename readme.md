@@ -1,0 +1,4 @@
+- use ruby 2.7.6 install with (`ruby-install 2.7.6` ) and activate with `chruby ruby-2.7.6`
+- `bundle install`
+- `bundle exec jekyll serve`
+- `jekyll serve --incremental --livereload --force_polling --drafts`
