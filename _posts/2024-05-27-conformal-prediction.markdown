@@ -107,7 +107,7 @@ tags: ['machine learning']
             [6.21330945e-06, 9.99917854e-01, 7.12575466e-05, 4.67474432e-06]])
     '''
     ```
-4. คำนวณค่า conformal score (หรือ $s$) ซึ่งจะเป็นค่าที่บอกว่าค่าที่เราทำนายมันห่างจากความเป็นจริงเท่าไหร่ ซึ่งถ้าเป็นโจทย์ประเภท classification ที่ทำนาย probability ออกมา เราก็จะใช้เป็น 1 - probability ของ class ที่ถูกได้เลย
+4. คำนวณค่า conformal score (หรือ $s$) ซึ่งจะเป็นค่าที่บอกว่าค่าที่เราทำนายมันห่างจากความเป็นจริงเท่าไหร่ ซึ่งถ้าเป็นโจทย์ประเภท classification ที่ทำนาย probability ออกมา เราก็จะใช้เป็น 1 - probability ของ class ที่ถูกได้เลย ซึ่งถ้าเราจะปรับใช้กับโจทย์อื่น ๆ เราต้อง define เอาว่าตัว score นี้จะคำนวณยังไง เช่น ถ้าหากเป็น regression ก็อาจจะเอา |y_true - y_predict| อะไรแบบนี้ก็ได้
     ```python
     conformal_scores = 1 - probs[list(range(VALIDATION_SIZE)), target_validation]
     ```
