@@ -125,7 +125,7 @@ tags: ['machine learning']
 
     \begin{equation}
 	\label{eq:xxx}
-    \mathcal{C}(X_{\text{test}}) = \{ y : s(X_{\text{test}}, y) \leq \hat{q} \}
+    \mathcal{C}(X_{\text{test}}) = \\{ y : s(X_{\text{test}}, y) \leq \hat{q} \\}
 	\end{equation}
 
     ซึ่งก็คือ code ด้านล่าง
