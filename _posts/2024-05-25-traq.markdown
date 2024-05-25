@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "TRAQ: Trustworthy Retrieval Augmented Question Answering via Conformal Prediction"
+title:  "Paper: TRAQ ใช้ conformal prediction กับ RAG เพื่อการันตีความถูกต้อง"
 date:   2024-05-25 10:15:02 +0700
 img_thumbnail: /assets/img/thumbnail/traq.png
 img_header: /assets/img/header/traq_cover.png
