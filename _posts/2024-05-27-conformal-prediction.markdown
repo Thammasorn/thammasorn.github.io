@@ -170,7 +170,7 @@ tags: ['machine learning']
 
 ที่จริง conformal prediction ยังมีท่าอื่น ๆ นี่น่าสนใจมากมาย เช่น 
 - ใช้ conformal กะ regression ยังไงงงง
-- จะทำยังไงให้เรา make sure ว่าคุณสมบัติ garuntee prob ไม่ได้เทไปอยู่ที่ class ใด class หนึ่ง เช่น เราตั้ง error rate ไว้ที่ 10% แต่ class A เนี่ยแบก ๆ ไปเลยได้ error 0% แต่ class B มี error 20% แล้วมันเลยได้เฉลี่ยเป็น 10% ตามที่เราตั้งไว้
+- จะทำยังไงให้เรา make sure ว่าคุณสมบัติ guarantee prob ไม่ได้เทไปอยู่ที่ class ใด class หนึ่ง เช่น เราตั้ง error rate ไว้ที่ 10% แต่ class A เนี่ยแบก ๆ ไปเลยได้ error 0% แต่ class B มี error 20% แล้วมันเลยได้เฉลี่ยเป็น 10% ตามที่เราตั้งไว้
 - การใช้ conformal prediction ในการทำ anomaly detection
 - etc
 
