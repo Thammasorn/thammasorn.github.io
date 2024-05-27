@@ -2,7 +2,7 @@
 layout: post
 title:  "Isolation Forest แบบ simple มั่ก ๆ"
 date:   2024-05-27 21:15:02 +0700
-img_thumbnail: /assets/img/thumbnail/rl.png
+img_thumbnail: /assets/img/isolation-forest/anomaly.png
 img_header: /assets/img/header/isolation-forest.webp
 description: "บทความนี้จะแนะนำให้รู้จักกับ isolation forest algorithm ซึ่งใช้ในการหา outlier หรือ anomaly ใน dataset"
 tags: ['machine learning']
