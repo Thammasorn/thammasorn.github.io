@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Paper RAPTOR: สรุปข้อมูลแบบ tree เพื่อให้ LLM เอาไปตอบได้ดีขึ้น"
+title:  "Paper RAPTOR: สรุปข้อมูลแบบ tree เพื่อให้ LLM เข้าใจองค์รวมได้ดีขึ้น"
 date:   2024-05-26 19:15:02 +0700
 img_thumbnail: /assets/img/thumbnail/raptor.png
 img_header: /assets/img/header/raptor.jpeg
