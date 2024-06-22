@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "รู้จักกับ Uplift Modelling กันดีกว่า"
+title:  "รู้จักกับ Uplift Model กันดีกว่า"
 date:   2024-06-20 18:15:02 +0700
 img_thumbnail: /assets/img/uplift/tlearner-problem.png
 img_header: /assets/img/header/uplift.webp
