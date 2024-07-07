@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "อยากให้ LLM ตอบเป็น JSON ทำไงดี (grammar)"
-date:   2024-06-20 18:15:02 +0700
+date:   2024-07-07 21:10:02 +0700
 img_thumbnail: /assets/img/thumbnail/llm-grammar.png
 img_header: /assets/img/header/llm-grammar.webp
 description: "บล็อคสั้น ๆ เล่าวิธีการบังคับให้ LLM ตอบออกมาเป็น json format ที่เราต้องการ"
