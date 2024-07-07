@@ -52,12 +52,12 @@ tags: ['llm']
 
     ```
 
-- จะเห็นได้ว่าอ่านยากเหมือนกันแฮะ แล้วเราจะเขียน grammar ของเราได้ยังไงหว่า แต่ว่าเรามีตัวช่วยก็คือเว็บ https://grammar.intrinsiclabs.ai/
+- จะเห็นได้ว่าอ่านยากเหมือนกันแฮะ แล้วเราจะเขียน grammar ของเราได้ยังไงหว่า แต่ว่าเรามีตัวช่วยก็คือเว็บ [https://grammar.intrinsiclabs.ai/](https://grammar.intrinsiclabs.ai/)
 - โดยใช้แบบตัวอย่างในภาพด้านล่าง 
 
     ![alt text](/assets/img/llm-grammar/grammar-builder.png)
 
-- จากนั้นก๊อป grammar มาเลยก็ได้ แล้วใช้ code ด้านล่างในการลอง inference ดูจ้า [lib](https://github.com/abetlen/llama-cpp-python)
+- จากนั้นก๊อป grammar มาเลยก็ได้ แล้วใช้ code ด้านล่างในการลอง inference ดูจ้า ใช้ [lib](https://github.com/abetlen/llama-cpp-python) นี้เด้อ
 
     ```python
     from llama_cpp import Llama, LlamaGrammar
